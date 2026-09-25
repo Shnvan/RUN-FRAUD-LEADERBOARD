@@ -1,5 +1,5 @@
 import "server-only";
-import { getChatGPTUser } from "@/app/chatgpt-auth";
+import { getCurrentUser, isAdminEmailAllowed } from "@/app/chatgpt-auth";
 
 export class ServiceError extends Error { constructor(public status: number, message: string) { super(message); } }
 const config = () => {
@@ -75,7 +75,10 @@ export async function boundedFormData(request: Request, maxBytes = 6*1024*1024) 
 export async function fingerprint(request: Request, discriminator = "") {
   const secret = process.env.ABUSE_HASH_SECRET;
   if (!secret || secret.length < 32) throw new ServiceError(503,"Submissions are temporarily unavailable.");
-  const ip = request.headers.get("cf-connecting-ip");
+  const forwardedIp = process.env.VERCEL === "1"
+    ? request.headers.get("x-vercel-forwarded-for")
+    : request.headers.get("cf-connecting-ip");
+  const ip = forwardedIp || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   if (!ip) throw new ServiceError(503,"Submissions are temporarily unavailable.");
   const ua = (request.headers.get("user-agent") || "").slice(0,256);
   const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
@@ -91,9 +94,8 @@ export async function verifyTurnstile(token: string, expectedHostname: string) {
   if (!result.success || result.hostname !== expectedHostname) throw new ServiceError(400,"Please complete the verification and try again.");
 }
 export async function requireAdmin() {
-  const user = await getChatGPTUser();
-  const allowed = (process.env.ADMIN_EMAILS || "").split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
-  if (!user || !allowed.includes(user.email.toLowerCase())) throw new ServiceError(403,"Access denied.");
+  const user = await getCurrentUser();
+  if (!user || !isAdminEmailAllowed(user.email)) throw new ServiceError(403,"Access denied.");
   return user;
 }
 export function errorResponse(error: unknown) {

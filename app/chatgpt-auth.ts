@@ -1,11 +1,13 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type ChatGPTUser = {
   userId: string;
   displayName: string;
   email: string;
   fullName: string | null;
+  provider?: "sites" | "supabase";
 };
 
 const USER_ID_HEADER = "oai-authenticated-user-id";
@@ -19,6 +21,9 @@ const SIGN_OUT_PATH = "/signout-with-chatgpt";
 const CALLBACK_PATH = "/callback";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
+  // The hosting platform only injects these identity headers on Sites. Never
+  // trust client-supplied headers when deployed to Vercel.
+  if (process.env.VERCEL === "1") return null;
   const requestHeaders = await headers();
   const userId = requestHeaders.get(USER_ID_HEADER);
   const email = requestHeaders.get(USER_EMAIL_HEADER);
@@ -36,7 +41,34 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
     displayName: fullName ?? email,
     email,
     fullName,
+    provider: "sites",
   };
+}
+
+export async function getCurrentUser(): Promise<ChatGPTUser | null> {
+  const sitesUser = await getChatGPTUser();
+  if (sitesUser) return sitesUser;
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return null;
+  const { data, error } = await supabase.auth.getUser();
+  const email = data.user?.email?.trim();
+  if (error || !data.user || !email) return null;
+  return {
+    userId: data.user.id,
+    displayName: email,
+    email,
+    fullName: null,
+    provider: "supabase",
+  };
+}
+
+export function isAdminEmailAllowed(email: string): boolean {
+  const allowed = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  return allowed.includes(email.trim().toLowerCase());
 }
 
 export async function requireChatGPTUser(
