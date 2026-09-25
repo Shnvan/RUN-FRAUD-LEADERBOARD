@@ -16,3 +16,9 @@ export const validPurchaseDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(v
 
 export type SellerStats = { id: string; username: string; normalized_username: string; reported_sales: string; accounts_sold: number; recorded_purchases: number; average_price: string | null; latest_price: string | null };
 export type PublicPurchase = { id: string; seller_id: string; username: string; normalized_username: string; purchase_date: string; quantity: number; unit_price: string; total_amount: string; created_at: string };
+export type PlatformStats = { reported_sales: string; accounts_sold: number; recorded_purchases: number; visible_sellers: number };
+export type HomeOverview = {
+  totals: PlatformStats;
+  leaders: { sales: SellerStats[]; accounts: SellerStats[]; records: SellerStats[] };
+  recent: PublicPurchase[];
+};

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Purchase Record",
-  description: "Buyer-reported sales records, with historical purchase prices and moderation.",
+  title: {default:"Purchase Record",template:"%s — Purchase Record"},
+  description: "Explore moderated buyer-reported sales, historical purchase prices, and seller activity.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

@@ -16,7 +16,19 @@ select p.id,p.seller_id,s.username,s.normalized_username,p.purchase_date,p.quant
 from public.purchases p join public.sellers s on s.id=p.seller_id
 where p.moderation_status='approved' and s.status='active';
 
+create or replace view public.platform_statistics as
+select
+  coalesce(sum(p.total_amount),0)::numeric(18,2) as reported_sales,
+  coalesce(sum(p.quantity),0)::bigint as accounts_sold,
+  count(p.id)::bigint as recorded_purchases,
+  count(distinct p.seller_id)::bigint as visible_sellers
+from public.purchases p
+join public.sellers s on s.id=p.seller_id
+where p.moderation_status='approved' and s.status='active';
+
 revoke all on public.seller_statistics from anon,authenticated;
 revoke all on public.public_purchase_rows from anon,authenticated;
+revoke all on public.platform_statistics from anon,authenticated;
 grant select on public.seller_statistics to service_role;
 grant select on public.public_purchase_rows to service_role;
+grant select on public.platform_statistics to service_role;

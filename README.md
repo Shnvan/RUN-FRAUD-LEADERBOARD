@@ -2,6 +2,8 @@
 
 Buyer-reported purchase records for one unnamed marketplace. Public totals include **approved** purchases only. Moderation approval makes a report eligible for publication; it does not independently verify a sale.
 
+The public homepage is an editorial dashboard with approved platform totals, three seller leaderboards, recent purchases, seller search, and an accessible purchase-recording modal. Rankings describe reported exposure only and never claim fraud, profit, or complete revenue.
+
 ## Local setup
 
 1. Run `npm ci`.
