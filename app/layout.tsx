@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {default:"Purchase Record",template:"%s — Purchase Record"},
-  description: "Explore moderated buyer-reported sales, historical purchase prices, and seller activity.",
+  description: "Explore reviewed buyer-reported unresolved losses by seller handle.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
