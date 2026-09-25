@@ -1,0 +1,4 @@
+import { dbGet, errorResponse, readEvidence, requireAdmin, ServiceError } from "@/lib/server";
+export async function GET(_request:Request,{params}:{params:Promise<{id:string}>}){
+  try{await requireAdmin();const id=(await params).id;if(!/^[0-9a-f-]{36}$/i.test(id))throw new ServiceError(404,"Evidence not found.");const rows=await dbGet<{evidence_path:string|null}[]>("purchases",`select=evidence_path&id=eq.${id}&limit=1`);const path=rows[0]?.evidence_path;if(!path)throw new ServiceError(404,"Evidence not found.");const response=await readEvidence(path);if(!response.ok)throw new ServiceError(404,"Evidence not found.");return new Response(response.body,{headers:{"content-type":response.headers.get("content-type")||"application/octet-stream","cache-control":"private, no-store","content-security-policy":"default-src 'none'; sandbox","x-content-type-options":"nosniff","content-disposition":"inline"}});}catch(error){return errorResponse(error);}
+}
