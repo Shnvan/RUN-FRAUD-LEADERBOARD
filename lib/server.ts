@@ -4,11 +4,11 @@ import { getChatGPTUser } from "@/app/chatgpt-auth";
 export class ServiceError extends Error { constructor(public status: number, message: string) { super(message); } }
 const config = () => {
   const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key || !url.startsWith("https://")) throw new ServiceError(503, "Records are temporarily unavailable.");
   return { url, key };
 };
-export const configured = () => Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+export const configured = () => Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY));
 export const submissionsConfigured = () => configured() && Boolean(
   process.env.TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY &&
   process.env.ABUSE_HASH_SECRET && process.env.ABUSE_HASH_SECRET.length>=32 &&
