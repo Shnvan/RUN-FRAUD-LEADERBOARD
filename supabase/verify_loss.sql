@@ -1,4 +1,4 @@
--- Run after 004_loss_reports.sql in a test project. All changes roll back.
+-- Run after 005_buyer_username.sql in a test project. All changes roll back.
 begin;
 do $$
 declare alpha uuid:=gen_random_uuid(); beta uuid:=gen_random_uuid();
@@ -29,22 +29,30 @@ begin
   if (select count(*) from public.public_loss_rows where id in (alpha_report,beta_report,pending_report,legacy_report))<>2
     then raise exception 'pending or purchase-only record leaked'; end if;
   if exists(select 1 from information_schema.columns where table_schema='public' and table_name='public_loss_rows'
-    and column_name in ('loss_details','evidence_path','submitter_fingerprint')) then raise exception 'private field leaked'; end if;
-  select public.submit_loss_report('verify_new_handle',current_date-1,1,30,20,'not_delivered',
+    and column_name in ('buyer_username','loss_details','evidence_path','submitter_fingerprint')) then raise exception 'private field leaked'; end if;
+  begin
+    perform public.submit_loss_report_with_buyer('verify_new_handle','<invalid>',current_date-1,1,30,20,'not_delivered',
+      'Order never arrived.',gen_random_uuid(),repeat('x',64),repeat('y',64),null);
+    raise exception 'buyer username validation failed';
+  exception when others then
+    if sqlerrm<>'invalid_buyer_username' then raise; end if;
+  end;
+  select public.submit_loss_report_with_buyer('verify_new_handle','verify_buyer',current_date-1,1,30,20,'not_delivered',
     'Order never arrived.',idem,repeat('x',64),repeat('y',64),null) into first_submit;
-  select public.submit_loss_report('verify_new_handle',current_date-1,1,30,20,'not_delivered',
+  select public.submit_loss_report_with_buyer('verify_new_handle','verify_buyer',current_date-1,1,30,20,'not_delivered',
     'Order never arrived.',idem,repeat('x',64),repeat('y',64),null) into repeated_submit;
   if first_submit<>repeated_submit then raise exception 'idempotency failed'; end if;
-  select public.submit_loss_report('verify_new_handle',current_date-1,1,30,20,'not_delivered',
+  if (select buyer_username from public.purchases where id=first_submit)<>'verify_buyer' then raise exception 'buyer username missing'; end if;
+  select public.submit_loss_report_with_buyer('verify_new_handle','verify_buyer',current_date-1,1,30,20,'not_delivered',
     'Order never arrived.',gen_random_uuid(),repeat('x',64),repeat('y',64),null) into duplicate_submit;
   select flags into duplicate_flags from public.purchases where id=duplicate_submit;
   if not ('possible_duplicate'=any(duplicate_flags)) then raise exception 'duplicate not flagged'; end if;
   for i in 1..3 loop
-    perform public.submit_loss_report('verify_new_handle',current_date-1,1,30,20,'not_delivered',
+    perform public.submit_loss_report_with_buyer('verify_new_handle','verify_buyer',current_date-1,1,30,20,'not_delivered',
       'Order never arrived.',gen_random_uuid(),repeat('x',64),repeat('z',64),null);
   end loop;
   begin
-    perform public.submit_loss_report('verify_new_handle',current_date-1,1,30,20,'not_delivered',
+    perform public.submit_loss_report_with_buyer('verify_new_handle','verify_buyer',current_date-1,1,30,20,'not_delivered',
       'Order never arrived.',gen_random_uuid(),repeat('x',64),repeat('z',64),null);
     raise exception 'rate limit failed';
   exception when others then

@@ -9,6 +9,10 @@ export const money = (value: string | number | null | undefined) => {
 
 export const normalizeHandle = (value: string) => value.trim().replace(/^@+/, "").toLowerCase();
 export const validHandle = (value: string) => /^[a-z0-9._-]{2,64}$/.test(normalizeHandle(value));
+export const validForumUsername = (value:string) => {
+  const trimmed=value.trim();
+  return trimmed.length>=2 && trimmed.length<=64 && !/[\u0000-\u001f\u007f<>]/.test(trimmed);
+};
 export const validPrice = (value: string) => /^(?:0|[1-9]\d{0,6})(?:\.\d{1,2})?$/.test(value) && Number(value) >= .01 && Number(value) <= 1000000;
 export const validQuantity = (value: string) => /^[1-9]\d{0,4}$/.test(value) && Number(value) <= 10000;
 export const cents = (value:string):bigint|null => {

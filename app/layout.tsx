@@ -4,7 +4,7 @@ import "@fontsource-variable/geist-mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: {default:"Purchase Record",template:"%s — Purchase Record"},
+  title: {default:"fraus",template:"%s — fraus"},
   description: "Explore reviewed buyer-reported unresolved losses by seller handle.",
   icons: {
     icon: "/favicon.svg",

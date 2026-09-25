@@ -2,8 +2,8 @@ import { dbGet, dbRpc, errorResponse, requireAdmin, sameOrigin, ServiceError } f
 const uuid = (value:unknown) => typeof value==="string" && /^[0-9a-f-]{36}$/i.test(value);
 export async function GET(){
   try {await requireAdmin();const [pending,losses,corrections,sellers,audit,blocked]=await Promise.all([
-    dbGet<unknown[]>("purchases","select=id,seller_id,purchase_date,quantity,unit_price,total_amount,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,flags,evidence_path,submitter_fingerprint,created_at,sellers(username)&moderation_status=eq.pending&order=created_at.asc&limit=100"),
-    dbGet<unknown[]>("purchases","select=id,purchase_date,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,created_at,sellers(username)&moderation_status=eq.approved&loss_issue=not.is.null&order=created_at.desc&limit=100"),
+    dbGet<unknown[]>("purchases","select=id,seller_id,buyer_username,purchase_date,quantity,unit_price,total_amount,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,flags,evidence_path,submitter_fingerprint,created_at,sellers(username)&moderation_status=eq.pending&order=created_at.asc&limit=100"),
+    dbGet<unknown[]>("purchases","select=id,buyer_username,purchase_date,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,created_at,sellers(username)&moderation_status=eq.approved&loss_issue=not.is.null&order=created_at.desc&limit=100"),
     dbGet<unknown[]>("correction_requests","select=*&status=eq.open&order=created_at.asc&limit=100"),
     dbGet<unknown[]>("sellers","select=id,username,normalized_username,status,created_at&order=created_at.desc&limit=100"),
     dbGet<unknown[]>("moderation_audit","select=*&order=created_at.desc&limit=50"),

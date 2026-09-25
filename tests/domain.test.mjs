@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { money, normalizeHandle, validHandle, validPrice, validPurchaseDate, validQuantity, validUnresolvedAmount } from "../lib/domain.ts";
+import { money, normalizeHandle, validForumUsername, validHandle, validPrice, validPurchaseDate, validQuantity, validUnresolvedAmount } from "../lib/domain.ts";
 
 test("historical amounts format without floating-point conversion",()=>{
   assert.equal(money("3000.00"),"₱3,000");
@@ -11,6 +11,15 @@ test("seller handles normalize to one identity",()=>{
   assert.equal(normalizeHandle(" @Seller123 "),"seller123");
   assert.ok(validHandle("@Seller123"));
   assert.equal(validHandle("person@example.com"),false);
+});
+test("buyer forum usernames can be human readable but cannot contain markup or controls",()=>{
+  assert.ok(validForumUsername("  María Santos  "));
+  assert.ok(validForumUsername("buyer_name.01"));
+  assert.equal(validForumUsername(" "),false);
+  assert.equal(validForumUsername("a"),false);
+  assert.equal(validForumUsername("<buyer>"),false);
+  assert.equal(validForumUsername("buyer\nname"),false);
+  assert.equal(validForumUsername("x".repeat(65)),false);
 });
 test("server-side quantity, price and date rules reject malformed values",()=>{
   assert.ok(validQuantity("3"));assert.equal(validQuantity("2.5"),false);
