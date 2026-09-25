@@ -8,6 +8,8 @@ export type ChatGPTUser = {
   email: string;
   fullName: string | null;
   provider?: "sites" | "supabase";
+  aal?: "aal1" | "aal2" | null;
+  sessionId?: string | null;
 };
 
 const USER_ID_HEADER = "oai-authenticated-user-id";
@@ -54,12 +56,18 @@ export async function getCurrentUser(): Promise<ChatGPTUser | null> {
   const { data, error } = await supabase.auth.getUser();
   const email = data.user?.email?.trim();
   if (error || !data.user || !email) return null;
+  const assurance=await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  const session=await supabase.auth.getSession();
+  let sessionId:string|null=null;
+  try{const token=session.data.session?.access_token;if(token){const payload=JSON.parse(Buffer.from(token.split(".")[1],"base64url").toString("utf8")) as {session_id?:unknown};if(typeof payload.session_id==="string")sessionId=payload.session_id;}}catch{sessionId=null;}
   return {
     userId: data.user.id,
     displayName: email,
     email,
     fullName: null,
     provider: "supabase",
+    aal: assurance.data?.currentLevel==="aal2"?"aal2":"aal1",
+    sessionId,
   };
 }
 
