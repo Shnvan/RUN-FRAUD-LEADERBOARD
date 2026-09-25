@@ -19,7 +19,7 @@ export function AdminSignIn({ url, publishableKey }: { url: string; publishableK
       const { error: requestError } = await supabase.auth.signInWithOtp({
         email: email.trim().toLowerCase(),
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=%2Fadmin`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           shouldCreateUser: false,
         },
       });
