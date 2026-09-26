@@ -14,7 +14,7 @@
 
 ## Backups
 
-Generate an age key locally and keep the private key offline. Put only the public recipient in the GitHub variable `BACKUP_AGE_RECIPIENT`. Add `SUPABASE_DB_URL`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, and `SUPABASE_EVIDENCE_BUCKET` as GitHub Actions secrets. Run the backup workflow manually once, decrypt it locally, restore the database into a disposable project, and inspect the evidence manifest before enabling its weekly schedule. Keep one encrypted monthly copy outside GitHub.
+Generate an age key locally and keep the private key offline. Put only the public recipient in the GitHub variable `BACKUP_AGE_RECIPIENT`. Add `SUPABASE_DB_PASSWORD`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, and `SUPABASE_EVIDENCE_BUCKET` as GitHub Actions secrets. The workflow passes the database password through `PGPASSWORD`, so passwords containing URI-reserved characters do not require encoding. Run the backup workflow manually once, decrypt it locally, restore the database into a disposable project, and inspect the evidence manifest before enabling its weekly schedule. Keep one encrypted monthly copy outside GitHub.
 
 ## Release gates
 
