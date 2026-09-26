@@ -10,7 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      PGHOST: aws-0-ap-northeast-2.pooler.supabase.com
+      PGPORT: "5432"
+      PGDATABASE: postgres
+      PGUSER: postgres.phbfqxqtkbxefhgwsfxd
+      PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PGSSLMODE: require
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
       SUPABASE_EVIDENCE_BUCKET: ${{ secrets.SUPABASE_EVIDENCE_BUCKET }}
@@ -18,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Check backup configuration
-        run: test -n "$SUPABASE_DB_URL" && test -n "$SUPABASE_URL" && test -n "$SUPABASE_SECRET_KEY" && test -n "$SUPABASE_EVIDENCE_BUCKET" && test -n "$AGE_RECIPIENT"
+        run: test -n "$PGPASSWORD" && test -n "$SUPABASE_URL" && test -n "$SUPABASE_SECRET_KEY" && test -n "$SUPABASE_EVIDENCE_BUCKET" && test -n "$AGE_RECIPIENT"
       - name: Install backup tools
         run: sudo apt-get update -qq && sudo apt-get install -y -qq age postgresql-client
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
@@ -27,7 +32,7 @@ jobs:
       - name: Export database and evidence
         run: |
           mkdir -p .backup/database .backup/evidence
-          pg_dump "$SUPABASE_DB_URL" --format=custom --no-owner --no-acl --file=.backup/database/fraus.dump
+          pg_dump --format=custom --no-owner --no-acl --file=.backup/database/fraus.dump
           node scripts/backup-evidence.mjs .backup/evidence
           tar -C .backup -czf fraus-backup.tar.gz database evidence
           age -r "$AGE_RECIPIENT" -o fraus-backup.tar.gz.age fraus-backup.tar.gz
