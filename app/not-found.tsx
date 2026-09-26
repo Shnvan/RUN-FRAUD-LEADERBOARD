@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { SiteShell } from "@/components/site-shell";
-import { RecordTrigger } from "@/components/record-trigger";
+import {SiteShell} from "@/components/site-shell";
+import {RecordTrigger} from "@/components/record-trigger";
+import {RetroWindow} from "@/components/retro-window";
+import {ReactionImage,BlinkSticker} from "@/components/old-web-art";
 
-export default function NotFound(){
-  return <SiteShell><main className="mx-auto grid min-h-[65dvh] max-w-[1380px] place-items-center px-5 py-16 text-center md:px-9"><div><p className="gallery-label text-muted-foreground">Index / 404</p><h1 className="mt-4 text-[clamp(3.5rem,9vw,8rem)] font-semibold leading-[.87] tracking-[-.085em]">NO PUBLIC<br/>REPORT YET.</h1><p className="mx-auto mt-6 max-w-sm text-sm leading-6 text-muted-foreground">This handle has no approved open loss reports in the index.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><Link href="/" className="inline-flex min-h-11 items-center border border-foreground px-5 text-xs font-semibold uppercase tracking-wide">Back to index</Link><RecordTrigger/></div></div></main></SiteShell>;
-}
+export default function NotFound(){return <SiteShell><main className="archive-desk grid min-h-[60dvh] place-items-center"><RetroWindow title="MISSING_CASE_FILE.EXE / 404" tone="red" className="w-full max-w-2xl" chrome="dialog"><div className="error-state-layout"><div data-qa-protected="404-copy"><div className="flex items-center gap-4"><BlinkSticker kind="warning"/><div><span className="archive-stamp">Missing page</span><h1 className="archive-heading mt-2">This page could not be found.</h1></div></div><p className="mt-5 text-sm leading-6">The address may be outdated, mistyped, or no longer available.</p><div className="mt-5 flex flex-wrap gap-3"><Link href="/" className="archive-button archive-button--paper">Back to index</Link><RecordTrigger className="archive-button archive-button--red"/></div></div><div className="error-state-art" aria-hidden="true"><ReactionImage name="sad-clown"/></div></div></RetroWindow></main></SiteShell>}

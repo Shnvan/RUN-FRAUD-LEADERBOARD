@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 160" role="img" aria-labelledby="title">
+<title id="title">An original cheerful ticket sprite carrying a magnifying glass</title>
+<path d="M25 23h132v31c-15 0-15 20 0 20v61H25V74c15 0 15-20 0-20z" fill="#d7ec67" stroke="#08245c" stroke-width="7" stroke-linejoin="round"/>
+<path d="M37 38h108v82H37z" fill="none" stroke="#08245c" stroke-width="3" stroke-dasharray="7 6"/>
+<circle cx="72" cy="71" r="5" fill="#08245c"/><circle cx="109" cy="71" r="5" fill="#08245c"/><path d="M73 89q17 17 35 0" fill="none" stroke="#08245c" stroke-width="5" stroke-linecap="round"/>
+<circle cx="136" cy="112" r="18" fill="#fff8df" stroke="#08245c" stroke-width="6"/><path d="m149 125 18 20" stroke="#08245c" stroke-width="7" stroke-linecap="round"/>
+</svg>
