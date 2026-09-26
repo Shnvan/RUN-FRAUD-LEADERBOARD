@@ -112,7 +112,7 @@ def make_contact_sheet() -> None:
     sheet = Image.new("RGB", (thumb_w * 4, 70 + thumb_h * 5), "#fffdf4")
     draw = ImageDraw.Draw(sheet)
     font = ImageFont.load_default()
-    draw.text((18, 16), "FRAUS USER-AUTHORIZED REACTION ASSETS", fill="#251634", font=font)
+    draw.text((18, 16), "FRAUS USER-AUTHORIZED REACTION ASSETS", fill="#08245c", font=font)
     draw.text((18, 34), "Exact supplied imagery; optimized and hosted locally", fill="#584d61", font=font)
     for index, path in enumerate(files):
         with Image.open(path) as opened:
@@ -122,7 +122,7 @@ def make_contact_sheet() -> None:
         tile = Image.new("RGBA", (thumb_w - 12, thumb_h - 12), "#fff0ca")
         tile.alpha_composite(image, ((tile.width - image.width) // 2, 8))
         sheet.paste(tile.convert("RGB"), (x + 6, y + 6))
-        draw.text((x + 12, y + 158), path.stem[:28], fill="#251634", font=font)
+        draw.text((x + 12, y + 158), path.stem[:28], fill="#08245c", font=font)
     sheet.save(ROOT / "public" / "assets" / "user-reaction-contact-sheet.png", optimize=True)
 
 

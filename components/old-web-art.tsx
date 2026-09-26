@@ -1,17 +1,15 @@
 import Image from "next/image";
 import type {CSSProperties,ReactNode} from "react";
 
-export type FrausCharacter="clown"|"jester"|"crocodile"|"snake"|"rat"|"bozo";
-export type CharacterPose="dancing"|"pointing"|"hanging"|"laughing"|"sign"|"crying"|"peeking"|"salesman"|"running"|"suspicious"|"confused"|"certified";
+export type FrausCharacter="clown"|"jester"|"snake"|"rat";
+export type CharacterPose="dancing"|"pointing"|"hanging"|"laughing"|"sign"|"salesman"|"running"|"suspicious";
 export type UserReactionName="burns-suspicious"|"krabs-money"|"rat-money"|"court-jester"|"clown-makeup"|"sad-clown"|"crocodile-suit"|"clown-portrait"|"no-bozos"|"red-angry"|"crying-face"|"anime-grin"|"clown-juggling"|"angry-yellow"|"batman-thinking"|"masked-runner"|"clown-waving";
 
 const sources:Record<FrausCharacter,Partial<Record<CharacterPose,string>>>={
   clown:{dancing:"/assets/characters/clown-dancing.webp",pointing:"/assets/characters/clown-pointing.webp"},
   jester:{hanging:"/assets/characters/jester-hanging.webp",laughing:"/assets/characters/jester-laughing.webp",sign:"/assets/characters/jester-sign.webp"},
-  crocodile:{crying:"/assets/characters/crocodile-crying.webp",peeking:"/assets/characters/crocodile-peeking.webp"},
   snake:{salesman:"/assets/characters/snake-salesman.webp"},
   rat:{running:"/assets/characters/rat-running.gif",suspicious:"/assets/characters/rat-suspicious.webp"},
-  bozo:{confused:"/assets/characters/bozo-confused.webp",certified:"/assets/characters/bozo-certified.webp"},
 };
 
 const reducedMotionSources:Partial<Record<CharacterPose,string>>={

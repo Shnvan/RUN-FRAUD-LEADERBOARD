@@ -3,7 +3,7 @@ import type {ReactNode} from "react";
 type RetroWindowProps = {
   title: string;
   eyebrow?: string;
-  tone?: "plum" | "cobalt" | "red" | "lime" | "paper";
+  tone?: "navy" | "cobalt" | "red" | "lime" | "paper";
   className?: string;
   bodyClassName?: string;
   children: ReactNode;

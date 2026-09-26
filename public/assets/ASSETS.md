@@ -8,19 +8,21 @@ The character assets below were created specifically for Fraus on 2026-09-26 usi
 | --- | --- | --- |
 | `characters/clown-*` | OpenAI image generation for Fraus | Original four-pose scanned-cartoon clown. Cropped, resized, and encoded locally. |
 | `characters/jester-*` | OpenAI image generation for Fraus | Original three-pose scanned-cartoon jester. Cropped, resized, and encoded locally. |
-| `characters/crocodile-*` | Fraus local Pillow generator | Original crying and peeking crocodile placeholder in the shared palette. |
 | `characters/snake-salesman.webp` | Fraus local Pillow generator | Original snake-salesman placeholder. |
 | `characters/rat-*` | Fraus local Pillow generator | Original four-frame running rat GIF and static pose. |
-| `characters/bozo-*` | Fraus local Pillow generator | Original confused clownish-fool placeholders. Not based on the trademarked Bozo character. |
 | `badges/*.gif`, `stickers/*.gif` | Fraus local Pillow generator | Original 88×31 badges and small blinking indicators. |
 | `backgrounds/*` | Fraus local Pillow generator | Original repeating paper and confetti textures. |
 | `character-contact-sheet.png` | Fraus local Pillow generator | Review sheet; not rendered in production pages. |
 
 Generated source sheets are retained outside the public web root in `docs/asset-sources/` to make later pose extraction and optimization reproducible. `scripts/generate_old_web_assets.py` documents the transformation.
 
+## Retired artwork
+
+All generated crocodile and Bozo artwork was retired on 2026-09-26 at the user's request. The files, component mappings, generator code, and contact-sheet entries were removed. Empty rank slots use the user-authorized `user-reactions/clown-waving.gif`; unavailable states use `user-reactions/angry-yellow.gif`; the leaderboard edge uses `user-reactions/masked-runner.gif`.
+
 ## Temporary artwork slots
 
-The crocodile, snake, rat, and bozo images are clearly treated as original temporary artwork. Their filenames and component slots are stable so approved final drawings can replace them without changing page code. See `ARTWORK-TODO.md` for the required replacement poses and animation behavior.
+The snake and rat images are clearly treated as original temporary artwork. Their filenames and component slots are stable so approved final drawings can replace them without changing page code. See `ARTWORK-TODO.md` for the required replacement poses and animation behavior.
 
 ## User-provided visual references
 
@@ -43,7 +45,7 @@ The user confirmed authorization on 2026-09-26 to publish the supplied reaction 
 | `clown-juggling.gif` | `¿Quién o qué es_ ¿Qué hace_.gif` | Homepage poster; animation preserved. |
 | `angry-yellow.gif` | `orig 540 × 540 pixels.gif` | Unavailable state; resized, optimized, animation preserved. |
 | `batman-thinking.gif` | `download (1).gif` | Methodology directory; resized, animation preserved. |
-| `masked-runner.gif` | `Gif, Lavori,professioni miste ,utilensi vari_ - page 3.gif` | Statistics divider; resized, animation preserved. |
+| `masked-runner.gif` | `Gif, Lavori,professioni miste ,utilensi vari_ - page 3.gif` | Leaderboard divider; resized, animation preserved. |
 | `clown-waving.gif` | `¿Quién o qué es_ ¿Qué hace_ (1).gif` | Report Desk; animation preserved. |
 
 Each animated production file has a `-still.webp` reduced-motion fallback. `user-reaction-contact-sheet.png` distinguishes these user-authorized assets from the original Fraus character sheet. The preparation process is reproducible through `scripts/prepare_user_reactions.py`.

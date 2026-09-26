@@ -4,7 +4,7 @@ import argparse
 import random
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,12 +16,12 @@ BADGES = ASSETS / "badges"
 BACKGROUNDS = ASSETS / "backgrounds"
 STICKERS = ASSETS / "stickers"
 
-INK = "#201126"
+INK = "#08245c"
 CREAM = "#fff1cc"
-RED = "#e4424f"
-BLUE = "#244fc2"
-LIME = "#d8ef55"
-PURPLE = "#6b3c91"
+RED = "#c83b49"
+BLUE = "#1847a3"
+LIME = "#d7ec67"
+TEAL = "#087f7a"
 ORANGE = "#ef8d3f"
 GRAY = "#8d8792"
 
@@ -88,34 +88,13 @@ def canvas(width: int = 520, height: int = 430) -> tuple[Image.Image, ImageDraw.
     return image, ImageDraw.Draw(image)
 
 
-def draw_crocodile() -> Image.Image:
-    image, d = canvas(680, 360)
-    d.ellipse((55, 95, 625, 335), fill=LIME, outline=INK, width=15)
-    d.ellipse((195, 45, 305, 155), fill=LIME, outline=INK, width=15)
-    d.ellipse((375, 45, 485, 155), fill=LIME, outline=INK, width=15)
-    d.ellipse((225, 78, 268, 122), fill=CREAM, outline=INK, width=8)
-    d.ellipse((405, 78, 448, 122), fill=CREAM, outline=INK, width=8)
-    d.ellipse((240, 91, 258, 116), fill=INK)
-    d.ellipse((420, 91, 438, 116), fill=INK)
-    d.polygon([(80, 230), (610, 210), (520, 326), (155, 336)], fill=CREAM, outline=INK)
-    d.line((80, 230, 610, 210), fill=INK, width=15)
-    for x in range(150, 560, 62):
-        d.polygon([(x, 223), (x + 24, 225), (x + 12, 263)], fill="white", outline=INK)
-    d.arc((122, 140, 555, 330), 5, 175, fill=RED, width=13)
-    d.ellipse((118, 172, 168, 216), fill=BLUE, outline=INK, width=7)
-    d.polygon([(143, 207), (117, 274), (169, 274)], fill=BLUE, outline=INK)
-    d.ellipse((514, 164, 564, 208), fill=BLUE, outline=INK, width=7)
-    d.polygon([(539, 199), (513, 266), (565, 266)], fill=BLUE, outline=INK)
-    return add_scan_texture(image, 4)
-
-
 def draw_snake() -> Image.Image:
     image, d = canvas(560, 520)
-    d.ellipse((95, 270, 485, 475), fill=PURPLE, outline=INK, width=17)
+    d.ellipse((95, 270, 485, 475), fill=TEAL, outline=INK, width=17)
     d.ellipse((175, 315, 405, 430), fill=CREAM, outline=INK, width=13)
-    d.line([(280, 355), (240, 270), (330, 190), (278, 112)], fill=PURPLE, width=95, joint="curve")
+    d.line([(280, 355), (240, 270), (330, 190), (278, 112)], fill=TEAL, width=95, joint="curve")
     d.line([(280, 355), (240, 270), (330, 190), (278, 112)], fill=INK, width=112, joint="curve")
-    d.line([(280, 355), (240, 270), (330, 190), (278, 112)], fill=PURPLE, width=84, joint="curve")
+    d.line([(280, 355), (240, 270), (330, 190), (278, 112)], fill=TEAL, width=84, joint="curve")
     d.ellipse((212, 50, 366, 182), fill=LIME, outline=INK, width=14)
     d.ellipse((246, 88, 272, 118), fill=CREAM, outline=INK, width=6)
     d.ellipse((306, 88, 332, 118), fill=CREAM, outline=INK, width=6)
@@ -153,38 +132,11 @@ def draw_rat_frame(step: int) -> Image.Image:
     return add_scan_texture(image, 20 + step)
 
 
-def draw_bozo() -> Image.Image:
-    image, d = canvas(520, 560)
-    d.ellipse((128, 96, 400, 360), fill=CREAM, outline=INK, width=16)
-    d.polygon([(170, 110), (265, 5), (340, 118)], fill=PURPLE, outline=INK)
-    d.ellipse((245, 4, 286, 45), fill=LIME, outline=INK, width=8)
-    d.ellipse((72, 130, 183, 260), fill=ORANGE, outline=INK, width=13)
-    d.ellipse((345, 128, 456, 260), fill=ORANGE, outline=INK, width=13)
-    d.ellipse((190, 178, 228, 226), fill="white", outline=INK, width=8)
-    d.ellipse((300, 178, 338, 226), fill="white", outline=INK, width=8)
-    d.ellipse((245, 218, 290, 258), fill=RED, outline=INK, width=8)
-    d.arc((190, 225, 340, 328), 25, 150, fill=INK, width=11)
-    d.line((268, 308, 268, 485), fill=INK, width=85)
-    d.line((210, 355, 100, 438), fill=INK, width=26)
-    d.line((320, 355, 430, 438), fill=INK, width=26)
-    d.line((240, 474, 170, 535), fill=INK, width=28)
-    d.line((296, 474, 370, 535), fill=INK, width=28)
-    d.ellipse((60, 410, 150, 470), fill=CREAM, outline=INK, width=11)
-    d.ellipse((385, 410, 475, 470), fill=CREAM, outline=INK, width=11)
-    return add_scan_texture(image, 7)
-
-
 def save_generated_characters() -> None:
-    croc = draw_crocodile()
-    croc.save(CHARACTERS / "crocodile-crying.webp", "WEBP", lossless=True, method=6)
-    ImageOps.flip(croc).save(CHARACTERS / "crocodile-peeking.webp", "WEBP", lossless=True, method=6)
     draw_snake().save(CHARACTERS / "snake-salesman.webp", "WEBP", lossless=True, method=6)
     rat_frames = [draw_rat_frame(i) for i in range(4)]
     rat_frames[0].save(CHARACTERS / "rat-running.gif", save_all=True, append_images=rat_frames[1:], duration=120, loop=0, disposal=2, transparency=0)
     rat_frames[1].save(CHARACTERS / "rat-suspicious.webp", "WEBP", lossless=True, method=6)
-    bozo = draw_bozo()
-    bozo.save(CHARACTERS / "bozo-confused.webp", "WEBP", lossless=True, method=6)
-    bozo.rotate(-4, resample=Image.Resampling.BICUBIC, expand=False).save(CHARACTERS / "bozo-certified.webp", "WEBP", lossless=True, method=6)
 
 
 def badge_frame(text: str, bg: str, fg: str = INK, offset: int = 0) -> Image.Image:
@@ -217,7 +169,7 @@ def save_badges() -> None:
 def save_backgrounds() -> None:
     tile = Image.new("RGB", (64, 64), "#fffaf0")
     d = ImageDraw.Draw(tile)
-    for x, y, color in ((7, 8, RED), (39, 14, BLUE), (20, 43, LIME), (54, 50, PURPLE)):
+    for x, y, color in ((7, 8, RED), (39, 14, BLUE), (20, 43, LIME), (54, 50, TEAL)):
         d.rectangle((x, y, x + 3, y + 3), fill=color)
         d.line((x - 2, y + 1, x + 5, y + 1), fill=color)
     tile.save(BACKGROUNDS / "confetti-tile.png", optimize=True)
@@ -268,8 +220,8 @@ def main() -> None:
     make_contact_sheet([
         CHARACTERS / "clown-dancing.webp", CHARACTERS / "clown-pointing.webp",
         CHARACTERS / "jester-hanging.webp", CHARACTERS / "jester-sign.webp",
-        CHARACTERS / "crocodile-crying.webp", CHARACTERS / "snake-salesman.webp",
-        CHARACTERS / "rat-running.gif", CHARACTERS / "bozo-confused.webp",
+        CHARACTERS / "snake-salesman.webp", CHARACTERS / "rat-running.gif",
+        CHARACTERS / "rat-suspicious.webp",
     ])
 
 
