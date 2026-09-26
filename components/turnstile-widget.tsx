@@ -7,6 +7,7 @@ type TurnstileOptions = {
   sitekey: string;
   size: "normal" | "compact";
   theme: "light";
+  action: string;
 };
 
 declare global {
@@ -18,7 +19,7 @@ declare global {
   }
 }
 
-export function TurnstileWidget({ siteKey }: { siteKey: string }) {
+export function TurnstileWidget({ siteKey, action="loss_report" }: { siteKey: string; action?: string }) {
   const container = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -38,9 +39,10 @@ export function TurnstileWidget({ siteKey }: { siteKey: string }) {
       sitekey: siteKey,
       size,
       theme: "light",
+      action,
     });
     return () => window.turnstile?.remove(widgetId);
-  }, [loaded, siteKey, size]);
+  }, [action, loaded, siteKey, size]);
 
   return <div className="min-w-0">
     <Script

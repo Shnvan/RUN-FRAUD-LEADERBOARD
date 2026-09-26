@@ -1,23 +1,24 @@
-import { boundedFormData, dbGet, dbRpc, deleteEvidence, errorResponse, fingerprint, requirePrivateEvidenceBucket, sameOrigin, uploadEvidence, verifyTurnstile, ServiceError } from "@/lib/server";
+import { boundedFormData, contentFingerprint, dbRpc, deleteEvidence, errorResponse, networkFingerprint, recordSecurityEvent, requirePrivateEvidenceBucket, sameOrigin, uploadEvidence, verifyTurnstile, ServiceError, validUuid } from "@/lib/server";
+import { sanitizeEvidence } from "@/lib/evidence";
 import { normalizeHandle, validForumUsername, validHandle, validPrice, validPurchaseDate, validQuantity, validUnresolvedAmount } from "@/lib/domain";
 
-const types:Record<string,number[]>={"image/jpeg":[0xff,0xd8,0xff],"image/png":[0x89,0x50,0x4e,0x47],"image/webp":[0x52,0x49,0x46,0x46]};
 const issues=new Set(["not_delivered","refund_not_received","other_unresolved"]);
+type Reservation={existing_id:string|null;flags:string[];proceed:boolean};
+const canonicalText=(value:string)=>value.trim().toLowerCase().replace(/\s+/g," ");
+const canonicalMoney=(value:string)=>{const [whole,fraction=""]=value.split(".");return `${BigInt(whole)}.${fraction.padEnd(2,"0")}`;};
 
 export async function POST(request:Request){
   let evidencePath:string|null=null;
-  try {
+  let networkKey:string|null=null;
+  try{
     if(!sameOrigin(request))throw new ServiceError(403,"Request not allowed.");
     const data=await boundedFormData(request);
     const handle=normalizeHandle(String(data.get("seller")||""));
     const buyerUsername=String(data.get("buyerUsername")||"").trim();
-    const date=String(data.get("purchaseDate")||"");
-    const quantity=String(data.get("quantity")||"");
-    const price=String(data.get("unitPrice")||"");
-    const unresolved=String(data.get("unresolvedAmount")||"");
-    const issue=String(data.get("issueType")||"");
-    const details=String(data.get("details")||"").trim();
-    const idempotency=String(data.get("idempotencyKey")||"");
+    const date=String(data.get("purchaseDate")||""),quantity=String(data.get("quantity")||""),price=String(data.get("unitPrice")||"");
+    const unresolved=String(data.get("unresolvedAmount")||""),issue=String(data.get("issueType")||""),details=String(data.get("details")||"").trim();
+    const formIdempotency=String(data.get("idempotencyKey")||"");
+    const idempotency=request.headers.get("idempotency-key")||formIdempotency;
     const token=String(data.get("turnstileToken")||"");
     if(!validHandle(handle))throw new ServiceError(400,"Enter a valid seller handle.");
     if(!validForumUsername(buyerUsername))throw new ServiceError(400,"Enter your forum username (2 to 64 characters).");
@@ -27,24 +28,16 @@ export async function POST(request:Request){
     if(!validUnresolvedAmount(unresolved,quantity,price))throw new ServiceError(400,"Enter an unresolved amount no greater than the purchase total.");
     if(!issues.has(issue))throw new ServiceError(400,"Choose what remains unresolved.");
     if(details.length<10||details.length>500)throw new ServiceError(400,"Describe what happened in 10 to 500 characters.");
-    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idempotency))throw new ServiceError(400,"Refresh the form and try again.");
-    const prior=await dbGet<{id:string}[]>("purchases",`select=id&idempotency_key=eq.${idempotency}&loss_issue=not.is.null&limit=1`);
-    if(prior[0])return Response.json({id:prior[0].id,status:"pending"},{status:200});
-    const file=data.get("evidence");
-    if(file instanceof File&&file.size){
-      if(file.size>5*1024*1024||!types[file.type])throw new ServiceError(400,"Choose a JPG, PNG, or WebP image under 5 MB.");
-      const magic=new Uint8Array(await file.slice(0,12).arrayBuffer());
-      if(!types[file.type].every((b,i)=>magic[i]===b)||(file.type==="image/webp"&&String.fromCharCode(...magic.slice(8,12))!=="WEBP"))throw new ServiceError(400,"That image file isn't supported.");
-      evidencePath=`${crypto.randomUUID()}.${file.type==="image/jpeg"?"jpg":file.type.split("/")[1]}`;
-    }
-    await verifyTurnstile(token,new URL(request.url).hostname);
-    await requirePrivateEvidenceBucket();
-    const actorFingerprint=await fingerprint(request);
-    const duplicateKey=await fingerprint(request,`${buyerUsername.toLowerCase()}|${handle}|${date}|${quantity}|${price}|${unresolved}|${issue}`);
-    if(evidencePath&&file instanceof File)await uploadEvidence(file,evidencePath);
-    const id=await dbRpc<string>("submit_loss_report_with_buyer",{p_handle:handle,p_buyer_username:buyerUsername,p_date:date,p_quantity:Number(quantity),p_unit_price:price,
-      p_unresolved_amount:unresolved,p_issue:issue,p_details:details,p_idempotency:idempotency,p_fingerprint:actorFingerprint,
-      p_duplicate_key:duplicateKey,p_evidence_path:evidencePath});
-    return Response.json({id,status:"pending"},{status:201,headers:{"cache-control":"no-store"}});
-  }catch(error){if(evidencePath)await deleteEvidence(evidencePath);return errorResponse(error);}
+    if(!validUuid(idempotency)||formIdempotency!==idempotency)throw new ServiceError(400,"Refresh the form and try again.");
+    await verifyTurnstile(token,new URL(request.url).hostname,request,"loss_report",idempotency);
+    networkKey=await networkFingerprint(request);
+    const duplicateKey=await contentFingerprint(`${handle}|${date}|${BigInt(quantity)}|${canonicalMoney(price)}|${canonicalMoney(unresolved)}|${issue}|${canonicalText(details)}`);
+    const reservation=await dbRpc<Reservation>("reserve_loss_submission",{p_fingerprint:networkKey,p_content_fingerprint:duplicateKey,p_seller_key:handle,p_idempotency:idempotency});
+    if(reservation.flags?.length)await recordSecurityEvent("loss_report_flagged","held",networkKey,request.headers.get("x-vercel-id"),{flags:reservation.flags,seller:handle});
+    if(reservation.existing_id||!reservation.proceed)return Response.json({status:"pending"},{status:200,headers:{"cache-control":"no-store"}});
+    const rawFile=data.get("evidence");let safeFile:File|null=null;
+    if(rawFile instanceof File&&rawFile.size){await requirePrivateEvidenceBucket();safeFile=await sanitizeEvidence(rawFile);evidencePath=`${crypto.randomUUID()}.webp`;await uploadEvidence(safeFile,evidencePath);}
+    await dbRpc<string>("submit_loss_report_secure",{p_handle:handle,p_buyer_username:buyerUsername,p_date:date,p_quantity:Number(quantity),p_unit_price:price,p_unresolved_amount:unresolved,p_issue:issue,p_details:details,p_idempotency:idempotency,p_fingerprint:networkKey,p_duplicate_key:duplicateKey,p_evidence_path:evidencePath,p_evidence_sanitized:Boolean(safeFile)});
+    return Response.json({status:"pending"},{status:201,headers:{"cache-control":"no-store"}});
+  }catch(error){if(evidencePath&&(!(error instanceof ServiceError)||error.status<500))await deleteEvidence(evidencePath);const code=error instanceof ServiceError?error.code:"internal_error";if(["rate_limited","circuit_open","turnstile_rejected","turnstile_unavailable","evidence_rejected"].includes(code))await recordSecurityEvent(code,code==="circuit_open"?"activated":"rejected",networkKey,request.headers.get("x-vercel-id"));return errorResponse(error);}
 }
