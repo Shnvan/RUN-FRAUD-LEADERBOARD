@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import {useTheme} from "next-themes";
 
 type TurnstileOptions = {
   sitekey: string;
   size: "normal" | "compact";
-  theme: "light";
+  theme: "light"|"dark";
   action: string;
 };
 
@@ -24,6 +25,7 @@ export function TurnstileWidget({ siteKey, action="loss_report" }: { siteKey: st
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [size, setSize] = useState<"normal" | "compact">("normal");
+  const {resolvedTheme}=useTheme();
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 639px)");
@@ -38,11 +40,11 @@ export function TurnstileWidget({ siteKey, action="loss_report" }: { siteKey: st
     const widgetId = window.turnstile.render(container.current, {
       sitekey: siteKey,
       size,
-      theme: "light",
+      theme: resolvedTheme==="light"?"light":"dark",
       action,
     });
     return () => window.turnstile?.remove(widgetId);
-  }, [action, loaded, siteKey, size]);
+  }, [action, loaded, resolvedTheme, siteKey, size]);
 
   return <div className="min-w-0">
     <Script

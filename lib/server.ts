@@ -81,6 +81,31 @@ export async function readEvidence(path: string): Promise<Response> {
   const bucket = process.env.SUPABASE_EVIDENCE_BUCKET || "private-evidence";
   return fetch(`${url}/storage/v1/object/authenticated/${bucket}/${path}`, {headers:{apikey:key,Authorization:`Bearer ${key}`},cache:"no-store"});
 }
+const sellerImageBucket=()=>process.env.SUPABASE_SELLER_IMAGE_BUCKET||"seller-profile-images";
+export async function requirePrivateSellerImageBucket(){
+  const {url,key}=config();const bucket=sellerImageBucket();
+  const response=await fetch(`${url}/storage/v1/bucket/${encodeURIComponent(bucket)}`,{headers:{apikey:key,Authorization:`Bearer ${key}`},cache:"no-store"});
+  if(!response.ok)throw new ServiceError(503,"Seller image storage is temporarily unavailable.");
+  const info=await response.json() as {public?:boolean};if(info.public!==false)throw new ServiceError(503,"Seller image storage is not private.");
+}
+export async function uploadSellerImage(file:File,path:string){
+  const {url,key}=config();const response=await fetch(`${url}/storage/v1/object/${sellerImageBucket()}/${path}`,{method:"POST",headers:{apikey:key,Authorization:`Bearer ${key}`,"content-type":"image/webp","cache-control":"public, max-age=31536000, immutable","x-upsert":"false"},body:await file.arrayBuffer(),signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw new ServiceError(503,"We couldn't save the seller image.");
+}
+export async function deleteSellerImage(path:string){
+  const {url,key}=config();const response=await fetch(`${url}/storage/v1/object/${sellerImageBucket()}/${path}`,{method:"DELETE",headers:{apikey:key,Authorization:`Bearer ${key}`},signal:AbortSignal.timeout(10000)}).catch(()=>null);
+  return Boolean(response?.ok||response?.status===404);
+}
+export async function readSellerImage(path:string){
+  const {url,key}=config();return fetch(`${url}/storage/v1/object/authenticated/${sellerImageBucket()}/${path}`,{headers:{apikey:key,Authorization:`Bearer ${key}`},cache:"no-store",signal:AbortSignal.timeout(10000)});
+}
+export async function listSellerImageObjects(){
+  const {url,key}=config();const bucket=sellerImageBucket();const found:Array<{name:string;created_at?:string}>=[];
+  async function walk(prefix=""){
+    let offset=0;while(true){const response=await fetch(`${url}/storage/v1/object/list/${encodeURIComponent(bucket)}`,{method:"POST",headers:{apikey:key,Authorization:`Bearer ${key}`,"content-type":"application/json"},body:JSON.stringify({prefix,limit:100,offset,sortBy:{column:"created_at",order:"asc"}}),cache:"no-store",signal:AbortSignal.timeout(10000)});if(!response.ok)throw new ServiceError(503,"Seller image storage is temporarily unavailable.");const objects=await response.json() as Array<{id?:string|null;name?:string;metadata?:unknown;created_at?:string}>;if(!objects.length)break;for(const object of objects){if(!object.name)continue;const name=prefix?`${prefix}/${object.name}`:object.name;if(object.id==null||object.metadata==null)await walk(name);else found.push({name,created_at:object.created_at});}offset+=objects.length;if(objects.length<100)break;}
+  }
+  await walk();return found;
+}
 export function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   return Boolean(origin && origin === new URL(request.url).origin);

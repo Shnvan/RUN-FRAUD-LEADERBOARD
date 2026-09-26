@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, Search } from "lucide-react";
 import { RecordTrigger } from "@/components/record-trigger";
 import { SellerSearch } from "@/components/seller-search";
+import {ThemeToggle} from "@/components/theme-toggle";
 
 export function SiteShell({children}: {children:React.ReactNode}) {
   return <div className="min-h-screen overflow-x-hidden">
@@ -15,6 +16,7 @@ export function SiteShell({children}: {children:React.ReactNode}) {
           <SellerSearch/>
           <nav aria-label="Primary" className="hidden items-center gap-5 text-xs font-semibold uppercase tracking-[.08em] md:flex"><Link href="/#gallery" className="inline-flex min-h-11 items-center px-2 hover:underline">Index</Link></nav>
           <Link href="/#gallery" aria-label="Search sellers" className="inline-flex size-11 shrink-0 items-center justify-center border border-foreground/25 lg:hidden"><Search size={17}/></Link>
+          <ThemeToggle/>
           <RecordTrigger compactLabel="Report" className="shrink-0 px-2.5 text-[10px] sm:px-4 sm:text-xs"/>
         </div>
       </div>

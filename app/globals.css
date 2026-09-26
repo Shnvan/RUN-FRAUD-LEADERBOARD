@@ -21,6 +21,15 @@
   --shadow-card: 0 1px 0 rgb(0 0 0 / .04);
   --shadow-float: 0 30px 90px rgb(0 0 0 / .23);
 }
+.dark {
+  --porcelain: oklch(0.125 0 0); --paper: oklch(0.165 0 0); --ink: oklch(0.965 0 0);
+  --graphite: oklch(0.72 0 0); --line: oklch(0.34 0 0); --signal: oklch(0.92 0 0);
+  --signal-ink: oklch(0.12 0 0); --coral: oklch(0.68 .16 25); --secondary: oklch(0.22 0 0);
+  --muted: oklch(0.22 0 0); --input: oklch(0.43 0 0); --shadow-card: 0 1px 0 rgb(255 255 255 / .05);
+  --shadow-float: 0 30px 90px rgb(0 0 0 / .65);
+  color-scheme: dark;
+}
+:root:not(.dark) { color-scheme: light; }
 @theme inline {
   --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card);
   --color-card-foreground: var(--card-foreground); --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground);
@@ -49,5 +58,6 @@ a { color: inherit; text-decoration: none; }
 .gallery-card::before { content:""; position:absolute; inset:0; z-index:-1; background-image:radial-gradient(currentColor .55px, transparent .55px); background-size:4px 4px; opacity:.11; mask-image:radial-gradient(ellipse at 72% 34%, black 0%, transparent 58%); }
 .gallery-card::after { content:""; position:absolute; width:72%; aspect-ratio:1; right:-14%; top:-20%; z-index:-1; border:1px solid currentColor; border-radius:50%; opacity:.18; box-shadow:0 0 0 28px transparent,0 0 0 29px currentColor,0 0 0 58px transparent,0 0 0 59px currentColor,0 0 0 88px transparent,0 0 0 89px currentColor; }
 .gallery-label { font-family:var(--font-mono); font-size:.64rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; }
+.hall-radial { background-image:radial-gradient(circle at 50% 22%,rgb(200 169 107 / .14),transparent 34%),linear-gradient(115deg,transparent 0 48%,rgb(255 255 255 / .025) 48% 49%,transparent 49% 100%); }
 @media (max-width: 767px) { .page-grid { background-image: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
