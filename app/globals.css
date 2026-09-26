@@ -98,6 +98,7 @@ a { color: inherit; text-decoration: none; }
 .archive-sidelabel { writing-mode:vertical-rl; font-family:var(--font-pixel); font-size:.7rem; }
 .archive-mascot { pointer-events:none; user-select:none; filter:drop-shadow(3px 4px 0 #1b1026); }
 .fraus-character { pointer-events:none; user-select:none; object-fit:contain; filter:drop-shadow(4px 5px 0 rgb(32 17 38 / .5)); }
+.reaction-image { pointer-events:none; user-select:none; object-fit:contain; filter:drop-shadow(3px 4px 0 rgb(32 17 38 / .38)); }
 .fraus-motion-static { display:none; }
 .pixel-art { image-rendering:pixelated; image-rendering:crisp-edges; }
 .old-web-badge { width:88px; height:31px; flex:none; }
@@ -112,21 +113,28 @@ a { color: inherit; text-decoration: none; }
 .old-web-left { transform:rotate(-.25deg); }
 .old-web-right { transform:translateY(22px) rotate(.3deg); }
 .nav-window { margin-top:34px; }
-.jester-hanger { position:absolute; z-index:8; width:130px; right:-64px; top:-112px; transform:rotate(8deg); }
+.jester-hanger { position:absolute; z-index:8; width:150px; height:132px; right:-55px; top:-72px; transform:rotate(8deg); }
 .hall-window { z-index:4; }
 .circus-poster { min-height:350px; overflow:visible; background-color:#d8ef55; background-image:radial-gradient(#201126 1px,transparent 1px),linear-gradient(101deg,transparent 0 78%,rgb(255 255 255 / .45) 78% 82%,transparent 82%); background-size:9px 9px,100% 100%; }
 .circus-poster::before { content:"★ ★ ★ FRAUS ★ ★ ★"; position:absolute; inset:10px 14px auto auto; font-family:var(--font-pixel); font-size:10px; transform:rotate(3deg); }
 .poster-kicker { position:relative; margin-top:1.2rem; font-family:var(--font-pixel); font-size:10px; letter-spacing:.08em; }
 .poster-note { position:absolute; left:54%; bottom:16px; border:3px double #201126; background:#fff1cc; padding:7px 10px; font-family:var(--font-pixel); font-size:8px; line-height:1.6; transform:rotate(-3deg); }
 .main-dancing-clown { position:absolute; z-index:6; width:315px; height:330px; right:-56px; bottom:-22px; object-fit:contain; }
+.poster-fraus-sticker { position:absolute; z-index:5; width:96px; height:112px; right:205px; top:5px; transform:rotate(-12deg); }
 .stage-grid { background-image:repeating-linear-gradient(90deg,transparent 0 22px,rgb(82 54 127 / .07) 22px 24px); }
 .report-desk-window { margin-left:-10px; }
-.report-snake { position:absolute; z-index:6; width:135px; right:-84px; top:-44px; transform:rotate(8deg); }
+.report-waving-clown { position:absolute; z-index:6; width:112px; height:112px; right:-30px; top:-64px; transform:rotate(7deg); }
+.status-reactions { display:flex; justify-content:flex-end; gap:4px; margin-top:7px; }
+.status-reactions .reaction-image { width:43px; height:43px; }
+.no-bozos-sticker { width:58px; height:64px; flex:none; filter:drop-shadow(2px 2px 0 #201126); }
+.web-ring-rat { position:absolute; z-index:5; width:70px; height:78px; right:-32px; bottom:-38px; transform:rotate(5deg); }
+.archive-burns { width:54px; height:82px; flex:none; align-self:flex-end; }
 .visitor-counter { display:inline-flex; gap:2px; padding:5px; border:3px inset #aaa; background:#050505; }
 .visitor-counter i { display:grid; width:22px; height:29px; place-items:center; background:#181818; color:#72ff72; font:20px var(--font-mono); font-style:normal; text-shadow:0 0 5px #72ff72; }
 .stats-scene { display:grid; grid-template-columns:minmax(0,1fr) 205px; gap:12px; align-items:start; }
-.running-rat { position:absolute; z-index:8; width:110px; height:70px; right:9%; bottom:-49px; animation:rat-run 7s linear infinite; }
+.running-rat { position:absolute; z-index:8; width:70px; height:96px; right:9%; bottom:-68px; animation:rat-run 7s linear infinite; }
 @keyframes rat-run { 0% { transform:translateX(0) scaleX(1); } 46% { transform:translateX(-620px) scaleX(1); } 50% { transform:translateX(-620px) scaleX(-1); } 96% { transform:translateX(0) scaleX(-1); } 100% { transform:translateX(0) scaleX(1); } }
+.stats-krabs { position:absolute; z-index:7; width:92px; height:92px; right:-45px; top:-72px; transform:rotate(7deg); }
 .tiny-ad { align-self:stretch; border:3px ridge #eee; background:#ffef65; color:#201126; padding:12px; font-family:var(--font-pixel); text-align:center; transform:rotate(1.5deg); box-shadow:4px 4px #201126; }
 .tiny-ad strong,.tiny-ad span,.tiny-ad a { display:block; }
 .tiny-ad strong { font-family:var(--font-display); font-size:22px; }
@@ -136,6 +144,16 @@ a { color: inherit; text-decoration: none; }
 .leaderboard-croc { position:absolute; z-index:8; width:240px; height:140px; right:-135px; bottom:-78px; transform:rotate(-7deg); }
 .empty-reaction { background:repeating-linear-gradient(-45deg,#fffaf0 0 12px,#f3e5c5 12px 24px); }
 .web-ring-box { margin-left:18px; }
+.reaction-board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.reaction-board__intro { grid-column:1 / -1; max-width:760px; font-size:.82rem; line-height:1.6; }
+.reaction-board figure { margin:0; border:2px solid var(--ink); background:var(--warm-paper); color:#251634; padding:8px; box-shadow:3px 3px 0 var(--ink); }
+.reaction-board figure:nth-of-type(2) { transform:rotate(.7deg); }
+.reaction-board figure:nth-of-type(3) { transform:rotate(-.6deg); }
+.reaction-board figure .reaction-image { width:100%; height:180px; object-fit:contain; }
+.reaction-board figcaption { border-top:1px dashed #251634; padding-top:6px; font-family:var(--font-pixel); font-size:8px; line-height:1.5; }
+.method-batman { width:100%; height:115px; margin:-.3rem 0 .7rem; border:2px inset #ddd; background:#7e6b8f; object-fit:cover; }
+.method-fine-print { min-height:130px; }
+.method-crocodile { position:absolute; z-index:4; width:145px; height:190px; right:8px; bottom:-18px; }
 .dark body { background-image:radial-gradient(#765a91 1px,transparent 1px); background-size:19px 19px; }
 .dark .browser-warning,.dark .retro-browserbar { filter:brightness(.75); }
 .site-brand,.site-brand:visited { color:#251634 !important; }
@@ -157,5 +175,5 @@ a { color: inherit; text-decoration: none; }
 @media (max-width:767px) { .retro-titlebar__eyebrow { display:none; } .retro-window { box-shadow:3px 3px 0 color-mix(in srgb,var(--ink) 70%,transparent); } }
 .hall-radial { background-image:radial-gradient(circle at 50% 22%,rgb(200 169 107 / .14),transparent 34%),linear-gradient(115deg,transparent 0 48%,rgb(255 255 255 / .025) 48% 49%,transparent 49% 100%); }
 @media (max-width: 1023px) { .old-web-layout { grid-template-columns:1fr; } .old-web-left,.old-web-right { transform:none; } .old-web-left { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .nav-window { margin-top:0; } .old-web-main { grid-row:1; } .old-web-left { grid-row:2; } .old-web-right { grid-row:3; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .leaderboard-scene { margin-inline:0; } }
-@media (max-width: 767px) { .page-grid { background-image:none; } .browser-warning { display:none; } .site-header .old-web-badge { display:none; } .old-web-left,.old-web-right { display:block; } .old-web-left>*+*,.old-web-right>*+* { margin-top:12px; } .circus-poster { min-height:320px; } .main-dancing-clown { width:170px; height:190px; right:-28px; bottom:-8px; } .poster-note { display:none; } .circus-poster h1 { max-width:82%; } .stats-scene { grid-template-columns:1fr; } .tiny-ad { display:none; } .report-desk-window { margin-left:0; } }
+@media (max-width: 767px) { .page-grid { background-image:none; } .browser-warning { display:none; } .site-header .old-web-badge { display:none; } .old-web-left,.old-web-right { display:block; } .old-web-left>*+*,.old-web-right>*+* { margin-top:12px; } .circus-poster { min-height:340px; } .main-dancing-clown { width:155px; height:170px; right:-18px; bottom:-4px; } .poster-note,.poster-fraus-sticker { display:none; } .circus-poster h1 { max-width:88%; } .stats-scene { grid-template-columns:1fr; } .tiny-ad { display:none; } .report-desk-window { margin-left:0; } .reaction-board { grid-template-columns:1fr; } .reaction-board__intro { grid-column:1; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } .fraus-motion-animated { display:none; } .fraus-motion-static { display:block; } }

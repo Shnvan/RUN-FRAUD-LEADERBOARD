@@ -24,7 +24,29 @@ The crocodile, snake, rat, and bozo images are clearly treated as original tempo
 
 ## User-provided visual references
 
-The downloaded reaction images and GIFs supplied on 2026-09-26 were inspected as art-direction references only. Several contain recognizable copyrighted characters or have no verifiable reuse license. They are not copied into `public/` or served by Fraus. Their functions—dancing, suspicious, laughing, running, pointing, and exaggerated reaction poses—are recreated through original Fraus characters.
+The user confirmed authorization on 2026-09-26 to publish the supplied reaction images. Exact source files are retained in `docs/asset-sources/user-reactions/`; optimized local variants are served from `public/assets/user-reactions/`. They are decorative internet-culture material and are never evidence or a factual label for a seller.
+
+| Production file | Original supplied file | Placement / modification |
+| --- | --- | --- |
+| `burns-suspicious.webp` | `download (61).jfif` | Homepage archive notice; resized. |
+| `krabs-money.webp` | `download (60).jfif` | Homepage statistics; resized. |
+| `rat-money.webp` | `RUN FOR IT.jfif` | Homepage web ring; white background removed. |
+| `court-jester.webp` | `download (59).jfif` | Homepage navigation; white background removed. |
+| `clown-makeup.webp` | `download (58).jfif` | About reaction archive; resized. |
+| `sad-clown.webp` | `download (57).jfif` | Empty and 404 states; dark background removed. |
+| `crocodile-suit.webp` | `download (56).jfif` | Methodology fine print; gray background removed. |
+| `clown-portrait.webp` | `Alô criançada, o blogueiro chegou!.jfif` | About reaction archive; resized. |
+| `no-bozos.webp` | `download (62).jfif` | Homepage update module; resized. |
+| `red-angry.webp` | `download (64).jfif` | Homepage status reaction; white background removed. |
+| `crying-face.webp` | `download (63).jfif` | Homepage status reaction; white background removed. |
+| `anime-grin.webp` | `maxresdefault-1966718344.jpg` | About reaction archive; resized. |
+| `clown-juggling.gif` | `¿Quién o qué es_ ¿Qué hace_.gif` | Homepage poster; animation preserved. |
+| `angry-yellow.gif` | `orig 540 × 540 pixels.gif` | Unavailable state; resized, optimized, animation preserved. |
+| `batman-thinking.gif` | `download (1).gif` | Methodology directory; resized, animation preserved. |
+| `masked-runner.gif` | `Gif, Lavori,professioni miste ,utilensi vari_ - page 3.gif` | Statistics divider; resized, animation preserved. |
+| `clown-waving.gif` | `¿Quién o qué es_ ¿Qué hace_ (1).gif` | Report Desk; animation preserved. |
+
+Each animated production file has a `-still.webp` reduced-motion fallback. `user-reaction-contact-sheet.png` distinguishes these user-authorized assets from the original Fraus character sheet. The preparation process is reproducible through `scripts/prepare_user_reactions.py`.
 
 ## Existing product marks
 
