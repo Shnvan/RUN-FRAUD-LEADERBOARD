@@ -1,32 +1,24 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Search } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { RecordTrigger } from "@/components/record-trigger";
-import { SellerSearch } from "@/components/seller-search";
 import {ThemeToggle} from "@/components/theme-toggle";
 
 export function SiteShell({children}: {children:React.ReactNode}) {
-  return <div className="min-h-screen overflow-x-hidden">
-    <header className="sticky top-0 z-40 border-b border-foreground/20 bg-background/94 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1380px] items-center justify-between gap-4 px-5 md:px-9">
-        <Link href="/" className="flex shrink-0 items-center gap-3 text-sm font-bold tracking-[-.04em]" aria-label="fraus home">
-          <span className="grid size-7 place-items-center border border-foreground text-lg leading-none">f.</span>
-          <span className="hidden sm:block">fraus</span>
-        </Link>
-        <div className="flex min-w-0 items-center gap-2 sm:gap-5">
-          <SellerSearch/>
-          <nav aria-label="Primary" className="hidden items-center gap-5 text-xs font-semibold uppercase tracking-[.08em] md:flex"><Link href="/#gallery" className="inline-flex min-h-11 items-center px-2 hover:underline">Index</Link></nav>
-          <Link href="/#gallery" aria-label="Search sellers" className="inline-flex size-11 shrink-0 items-center justify-center border border-foreground/25 lg:hidden"><Search size={17}/></Link>
-          <ThemeToggle/>
-          <RecordTrigger compactLabel="Report" className="shrink-0 px-2.5 text-[10px] sm:px-4 sm:text-xs"/>
-        </div>
+  return <div className="min-h-screen overflow-x-clip">
+    <header className="relative z-40 border-b-[3px] border-[#180e25] bg-[#52367f] text-[#fff5d8]">
+      <div className="mx-auto flex max-w-[1480px] flex-wrap items-center gap-2 px-4 py-2 md:px-8">
+        <Link href="/" aria-label="fraus home" className="site-brand flex items-center gap-2 border-2 border-[#1b1026] bg-[#d7ec67] px-2 py-1 shadow-[3px_3px_0_#1b1026]"><Image src="/mascots/ticket-sprite.svg" alt="" width={30} height={28}/><span className="display-type text-xl">fraus</span></Link>
+        <span className="hidden border-l border-[#fff5d8]/30 pl-3 font-[family-name:var(--font-pixel)] text-[10px] lg:inline">BUYER REPORT ARCHIVE / PHP</span>
+        <nav aria-label="Primary" className="order-3 flex w-full flex-wrap items-center gap-1 font-[family-name:var(--font-pixel)] text-[10px] md:order-none md:ml-auto md:w-auto">
+          <Link href="/" className="px-2 py-2 hover:bg-[#fff5d8] hover:text-[#1b1026]">Main stage</Link>
+          <Link href="/#gallery" className="px-2 py-2 hover:bg-[#fff5d8] hover:text-[#1b1026]">Case files</Link>
+          <Link href="/methodology" className="px-2 py-2 hover:bg-[#fff5d8] hover:text-[#1b1026]">Method</Link>
+        </nav>
+        <div className="ml-auto flex items-center gap-2 md:ml-1"><ThemeToggle/><RecordTrigger label="Report unresolved loss" compactLabel="Report" className="archive-button archive-button--red shrink-0 border-[#1b1026] px-2 text-[10px] text-[#251634] sm:px-3"/></div>
       </div>
     </header>
     {children}
-    <footer className="mx-auto max-w-[1380px] px-5 pb-6 md:px-9">
-      <div className="flex flex-wrap items-end justify-between gap-5 border-t border-foreground/20 py-6">
-        <div><div className="text-sm font-bold tracking-[-.04em]">fraus</div><p className="mt-1 text-xs text-muted-foreground">Buyer-reported unresolved losses / PHP</p></div>
-        <div className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-muted-foreground"><Link href="/methodology" className="inline-flex min-h-11 items-center px-2 hover:text-foreground">How rankings work</Link><Link href="/about" className="inline-flex min-h-11 items-center px-2 hover:text-foreground">About</Link><Link href="/admin" className="inline-flex min-h-11 items-center gap-1 px-2 hover:text-foreground">Admin <ArrowUpRight size={11}/></Link></div>
-      </div>
-    </footer>
+    <footer className="mx-auto max-w-[1480px] px-4 pb-8 md:px-8"><div className="retro-window retro-window--plum"><div className="retro-titlebar"><span className="retro-titlebar__dots" aria-hidden="true"><i/><i/><i/></span>fraus / archive footer</div><div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4"><div><strong className="display-type text-lg">fraus</strong><p className="text-xs text-muted-foreground">Reviewed buyer claims / PHP. Inclusion does not establish wrongdoing.</p></div><div className="flex flex-wrap gap-2 font-[family-name:var(--font-pixel)] text-[10px]"><Link href="/methodology" className="archive-button archive-button--paper">Method</Link><Link href="/about" className="archive-button archive-button--paper">About</Link><Link href="/admin" className="archive-button archive-button--paper">Admin <ArrowUpRight size={13}/></Link></div></div></div></footer>
   </div>;
 }
