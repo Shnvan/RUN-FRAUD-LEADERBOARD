@@ -1,16 +1,17 @@
 import { requireCsrf, requireRecentMfa } from "@/lib/admin-security";
 import { boundedJson, dbGet, dbRpc, errorResponse, recordSecurityEvent, requireAdmin, ServiceError, validUuid } from "@/lib/server";
 import {parseAccountTypes} from "@/lib/account-types.mjs";
+import {parseReportItems} from "@/lib/report-items.mjs";
 
-const sensitive=new Set(["approve","reject","retract","adjust_loss","resolve_loss","merge","suspend","restore","resolve","dismiss","block","unblock","set_account_types"]);
-const confirmations:Record<string,string>={approve:"APPROVE",reject:"REJECT",retract:"RETRACT",adjust_loss:"ADJUST",resolve_loss:"RESOLVE",merge:"MERGE",suspend:"SUSPEND",restore:"RESTORE",resolve:"RESOLVE",dismiss:"DISMISS",block:"BLOCK",unblock:"UNBLOCK",set_account_types:"UPDATE TYPES"};
+const sensitive=new Set(["approve","reject","retract","adjust_loss","resolve_loss","merge","suspend","restore","resolve","dismiss","block","unblock","set_account_types","set_items"]);
+const confirmations:Record<string,string>={approve:"APPROVE",reject:"REJECT",retract:"RETRACT",adjust_loss:"ADJUST",resolve_loss:"RESOLVE",merge:"MERGE",suspend:"SUSPEND",restore:"RESTORE",resolve:"RESOLVE",dismiss:"DISMISS",block:"BLOCK",unblock:"UNBLOCK",set_account_types:"UPDATE TYPES",set_items:"UPDATE ITEMS"};
 
 export async function GET(){
   try{
     await requireAdmin();
     const [pending,losses,corrections,sellers,audit,blocked,security,accountTypes]=await Promise.all([
-      dbGet<unknown[]>("purchases","select=id,seller_id,buyer_username,purchase_date,quantity,unit_price,total_amount,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,flags,evidence_path,evidence_sanitized,linked_duplicate_id,submitter_fingerprint,created_at,sellers(username),purchase_account_types(account_type_slug,custom_label,account_types(label))&moderation_status=eq.pending&order=created_at.asc&limit=100"),
-      dbGet<unknown[]>("purchases","select=id,buyer_username,purchase_date,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,moderation_reason,created_at,sellers(username),purchase_account_types(account_type_slug,custom_label,account_types(label))&moderation_status=eq.approved&loss_issue=not.is.null&order=created_at.desc&limit=100"),
+      dbGet<unknown[]>("purchases","select=id,seller_id,buyer_username,quantity,unit_price,total_amount,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,flags,evidence_path,evidence_sanitized,linked_duplicate_id,submitter_fingerprint,created_at,sellers(username),purchase_account_types(account_type_slug,custom_label,account_types(label)),purchase_items(id,account_type_slug,custom_label,quantity,unit_price,total_amount,sort_order)&moderation_status=eq.pending&purchase_items.order=sort_order.asc&order=created_at.asc&limit=100"),
+      dbGet<unknown[]>("purchases","select=id,buyer_username,quantity,unit_price,total_amount,loss_issue,loss_details,reported_unresolved_amount,unresolved_amount,loss_status,moderation_reason,created_at,sellers(username),purchase_account_types(account_type_slug,custom_label,account_types(label)),purchase_items(id,account_type_slug,custom_label,quantity,unit_price,total_amount,sort_order)&moderation_status=eq.approved&loss_issue=not.is.null&purchase_items.order=sort_order.asc&order=created_at.desc&limit=100"),
       dbGet<unknown[]>("correction_requests","select=*&status=eq.open&order=created_at.asc&limit=100"),
       dbGet<unknown[]>("sellers","select=id,username,normalized_username,status,avatar_path,avatar_updated_at,created_at&order=created_at.desc&limit=100"),
       dbGet<unknown[]>("moderation_audit","select=*&order=created_at.desc&limit=100"),
@@ -50,6 +51,9 @@ export async function POST(request:Request){
     }else if(action==="set_account_types"){
       if(!validUuid(data.id))throw new ServiceError(400,"Choose a report.");targetId=data.id;let parsed;try{parsed=parseAccountTypes(data.accountTypes,data.otherAccountType);}catch{throw new ServiceError(400,"Choose between one and eight valid account types.");}
       if(reason.length<5)throw new ServiceError(400,"Enter a reason for changing account types.");detail={account_types:parsed.slugs,has_custom:Boolean(parsed.other)};await dbRpc("set_purchase_account_types",{p_purchase_id:data.id,p_account_types:parsed.slugs,p_other_account_type:parsed.other});
+    }else if(action==="set_items"){
+      if(!validUuid(data.id))throw new ServiceError(400,"Choose a report.");targetId=data.id;let items;try{items=parseReportItems(data.items);}catch{throw new ServiceError(400,"Enter between one and eight valid product rows.");}
+      if(reason.length<5)throw new ServiceError(400,"Enter a reason for changing product rows.");detail=await dbRpc<Record<string,unknown>>("set_purchase_items_secure",{p_purchase_id:data.id,p_items:items});
     }else throw new ServiceError(400,"Unknown action.");
     if(action!=="approve"&&action!=="reject")await dbRpc("record_admin_action",{p_actor:admin.email,p_actor_id:admin.userId,p_session_id:admin.sessionId,p_action:action,p_target_id:targetId,p_reason:reason,p_request_id:requestId,p_detail:detail});
     await recordSecurityEvent("moderator_change","accepted",null,requestId,{action,targetId});
