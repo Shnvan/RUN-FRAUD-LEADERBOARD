@@ -10,3 +10,9 @@
 8. Run the encrypted backup workflow and confirm both `evidence/manifest.json` and `seller-images/manifest.json` are present.
 
 The application deliberately expects the database migration before deployment. Existing rows remain valid with no account-type labels or seller image.
+## Hall metrics before merge
+
+1. Apply `supabase/010_hall_metrics.sql` after migration `008`.
+2. Run `supabase/verify_profiles.sql` and `supabase/verify_hall.sql`.
+3. Confirm `get_public_overview` returns `reported_purchase_value` and `accounts_reported_purchased` in both `totals` and every leader row.
+4. Deploy the application and verify the hall, leaderboard, and seller profile totals against approved open reports.

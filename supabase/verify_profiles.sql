@@ -9,4 +9,12 @@ begin
 end $$;
 
 select slug,label,active from public.account_types order by sort_order;
+
+do $$
+begin
+  if not exists(select 1 from information_schema.columns where table_schema='public' and table_name='seller_loss_statistics' and column_name='reported_purchase_value') then raise exception 'seller reported purchase value missing';end if;
+  if not exists(select 1 from information_schema.columns where table_schema='public' and table_name='seller_loss_statistics' and column_name='accounts_reported_purchased') then raise exception 'seller account total missing';end if;
+  if not exists(select 1 from information_schema.columns where table_schema='public' and table_name='platform_loss_statistics' and column_name='reported_purchase_value') then raise exception 'platform reported purchase value missing';end if;
+  if not exists(select 1 from information_schema.columns where table_schema='public' and table_name='platform_loss_statistics' and column_name='accounts_reported_purchased') then raise exception 'platform account total missing';end if;
+end $$;
 select id,public,file_size_limit,allowed_mime_types from storage.buckets where id='seller-profile-images';
