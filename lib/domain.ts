@@ -27,6 +27,9 @@ export const manilaToday = () => new Intl.DateTimeFormat("en-CA", {timeZone: "As
 export const validPurchaseDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10) === value && value >= "2000-01-01" && value <= manilaToday();
 
 export type AccountType = {slug:string;label:string};
-export type SellerLossStats = { id:string; username:string; normalized_username:string; unresolved_amount:string; report_count:number; account_types:string[]; has_avatar:boolean; avatar_updated_at:string|null; reported_purchase_value:string; accounts_reported_purchased:number };
-export type PublicLoss = { id:string; seller_id:string; username:string; normalized_username:string; purchase_date:string; quantity:number; unit_price:string; total_amount:string; unresolved_amount:string; loss_issue:"not_delivered"|"refund_not_received"|"other_unresolved"; created_at:string; account_types:string[] };
+export type ReportItem = {id:string;account_type_slug:string;label:string;quantity:number;unit_price:string;total_amount:string};
+export type PrimaryAccountType = {slug:string;label:string;accounts:number;reported_purchase_value:string};
+export type AccountTypeBreakdown = PrimaryAccountType;
+export type SellerLossStats = { id:string; username:string; normalized_username:string; unresolved_amount:string; report_count:number; account_types:string[]; has_avatar:boolean; avatar_updated_at:string|null; reported_purchase_value:string; accounts_reported_purchased:number;primary_account_type:PrimaryAccountType|null;account_type_breakdown:AccountTypeBreakdown[] };
+export type PublicLoss = { id:string; seller_id:string; username:string; normalized_username:string; purchase_date:string|null; quantity:number|null; unit_price:string|null; total_amount:string; unresolved_amount:string; loss_issue:"not_delivered"|"refund_not_received"|"other_unresolved"; created_at:string; account_types:string[];items:ReportItem[];accounts_reported_purchased:number;reported_purchase_value:string };
 export type LossOverview = { totals:{unresolved_amount:string;report_count:number;visible_sellers:number;reported_purchase_value:string;accounts_reported_purchased:number}; leaders:SellerLossStats[]; recent:PublicLoss[] };
