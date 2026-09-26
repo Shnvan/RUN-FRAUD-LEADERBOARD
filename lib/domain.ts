@@ -26,6 +26,7 @@ export const validUnresolvedAmount = (amount:string,quantity:string,unitPrice:st
 export const manilaToday = () => new Intl.DateTimeFormat("en-CA", {timeZone: "Asia/Manila", year: "numeric", month: "2-digit", day: "2-digit"}).format(new Date());
 export const validPurchaseDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10) === value && value >= "2000-01-01" && value <= manilaToday();
 
-export type SellerLossStats = { id:string; username:string; normalized_username:string; unresolved_amount:string; report_count:number };
-export type PublicLoss = { id:string; seller_id:string; username:string; normalized_username:string; purchase_date:string; quantity:number; unit_price:string; total_amount:string; unresolved_amount:string; loss_issue:"not_delivered"|"refund_not_received"|"other_unresolved"; created_at:string };
+export type AccountType = {slug:string;label:string};
+export type SellerLossStats = { id:string; username:string; normalized_username:string; unresolved_amount:string; report_count:number; account_types:string[]; has_avatar:boolean; avatar_updated_at:string|null };
+export type PublicLoss = { id:string; seller_id:string; username:string; normalized_username:string; purchase_date:string; quantity:number; unit_price:string; total_amount:string; unresolved_amount:string; loss_issue:"not_delivered"|"refund_not_received"|"other_unresolved"; created_at:string; account_types:string[] };
 export type LossOverview = { totals:{unresolved_amount:string;report_count:number;visible_sellers:number}; leaders:SellerLossStats[]; recent:PublicLoss[] };

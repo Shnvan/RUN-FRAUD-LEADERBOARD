@@ -21,6 +21,15 @@
   --shadow-card: 0 1px 0 rgb(0 0 0 / .04);
   --shadow-float: 0 30px 90px rgb(0 0 0 / .23);
 }
+.dark {
+  --porcelain: oklch(0.125 0 0); --paper: oklch(0.165 0 0); --ink: oklch(0.965 0 0);
+  --graphite: oklch(0.72 0 0); --line: oklch(0.34 0 0); --signal: oklch(0.92 0 0);
+  --signal-ink: oklch(0.12 0 0); --coral: oklch(0.68 .16 25); --secondary: oklch(0.22 0 0);
+  --muted: oklch(0.22 0 0); --input: oklch(0.43 0 0); --shadow-card: 0 1px 0 rgb(255 255 255 / .05);
+  --shadow-float: 0 30px 90px rgb(0 0 0 / .65);
+  color-scheme: dark;
+}
+:root:not(.dark) { color-scheme: light; }
 @theme inline {
   --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card);
   --color-card-foreground: var(--card-foreground); --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground);
