@@ -143,10 +143,14 @@ def badge_frame(text: str, bg: str, fg: str = INK, offset: int = 0) -> Image.Ima
     image = Image.new("RGB", (88, 31), bg)
     d = ImageDraw.Draw(image)
     d.rectangle((0, 0, 87, 30), outline=INK, width=2)
-    d.rectangle((3 + offset, 3, 8 + offset, 8), fill=fg)
-    label_font = font(9 if len(text) <= 12 else 7)
+    d.rectangle((4 + offset, 4, 8 + offset, 8), fill=fg)
+    label_font = font(8 if len(text) <= 12 else 7)
     bbox = d.textbbox((0, 0), text, font=label_font)
-    d.text(((88 - (bbox[2] - bbox[0])) // 2, 16 - (bbox[3] - bbox[1]) // 2), text, font=label_font, fill=fg, anchor="mm")
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    x = max(12, min(86 - text_width, (88 - text_width) // 2 + 3))
+    y = (31 - text_height) // 2 - bbox[1]
+    d.text((x, y), text, font=label_font, fill=fg)
     return image
 
 
@@ -160,10 +164,13 @@ def save_badges() -> None:
     for name, text, color in pairs:
         frames = [badge_frame(text, color, CREAM if color in (BLUE, RED) else INK, i) for i in (0, 2)]
         frames[0].save(BADGES / name, save_all=True, append_images=frames[1:], duration=550, loop=0)
+        frames[0].save(BADGES / name.replace(".gif", "-still.webp"), "WEBP", lossless=True, method=6)
     new_frames = [badge_frame("NEW!", RED if i % 2 == 0 else LIME, CREAM if i % 2 == 0 else INK) for i in range(2)]
     new_frames[0].save(STICKERS / "new-blink.gif", save_all=True, append_images=new_frames[1:], duration=330, loop=0)
+    new_frames[0].save(STICKERS / "new-blink-still.webp", "WEBP", lossless=True, method=6)
     warning_frames = [badge_frame("WARNING", ORANGE if i % 2 == 0 else RED, INK) for i in range(2)]
     warning_frames[0].save(STICKERS / "warning-blink.gif", save_all=True, append_images=warning_frames[1:], duration=280, loop=0)
+    warning_frames[0].save(STICKERS / "warning-blink-still.webp", "WEBP", lossless=True, method=6)
 
 
 def save_backgrounds() -> None:

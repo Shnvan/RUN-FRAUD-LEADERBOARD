@@ -10,7 +10,7 @@ The character assets below were created specifically for Fraus on 2026-09-26 usi
 | `characters/jester-*` | OpenAI image generation for Fraus | Original three-pose scanned-cartoon jester. Cropped, resized, and encoded locally. |
 | `characters/snake-salesman.webp` | Fraus local Pillow generator | Original snake-salesman placeholder. |
 | `characters/rat-*` | Fraus local Pillow generator | Original four-frame running rat GIF and static pose. |
-| `badges/*.gif`, `stickers/*.gif` | Fraus local Pillow generator | Original 88×31 badges and small blinking indicators. |
+| `badges/*.gif`, `stickers/*.gif` | Fraus local Pillow generator | Original 88×31 badges and small blinking indicators. Every animation includes a matching `-still.webp` reduced-motion frame. |
 | `backgrounds/*` | Fraus local Pillow generator | Original repeating paper and confetti textures. |
 | `character-contact-sheet.png` | Fraus local Pillow generator | Review sheet; not rendered in production pages. |
 
@@ -18,7 +18,7 @@ Generated source sheets are retained outside the public web root in `docs/asset-
 
 ## Retired artwork
 
-All generated crocodile and Bozo artwork was retired on 2026-09-26 at the user's request. The files, component mappings, generator code, and contact-sheet entries were removed. Empty rank slots use the user-authorized `user-reactions/clown-waving.gif`; unavailable states use `user-reactions/angry-yellow.gif`; the leaderboard edge uses `user-reactions/masked-runner.gif`.
+All generated crocodile and Bozo artwork was retired on 2026-09-26 at the user's request. The files, component mappings, generator code, and contact-sheet entries were removed. Empty rank slots use the user-authorized `user-reactions/clown-waving.gif`; unavailable states use `user-reactions/angry-yellow.webp`; the leaderboard decoration rail uses `user-reactions/masked-runner.gif`.
 
 ## Temporary artwork slots
 
@@ -43,12 +43,12 @@ The user confirmed authorization on 2026-09-26 to publish the supplied reaction 
 | `crying-face.webp` | `download (63).jfif` | Homepage status reaction; white background removed. |
 | `anime-grin.webp` | `maxresdefault-1966718344.jpg` | About reaction archive; resized. |
 | `clown-juggling.gif` | `¿Quién o qué es_ ¿Qué hace_.gif` | Homepage poster; animation preserved. |
-| `angry-yellow.gif` | `orig 540 × 540 pixels.gif` | Unavailable state; resized, optimized, animation preserved. |
+| `angry-yellow.webp` | `orig 540 × 540 pixels.gif` | Unavailable state; resized to 280px, alternate frames combined, and re-encoded as animated WebP (416 KB from a 1.9 MB source). |
 | `batman-thinking.gif` | `download (1).gif` | Methodology directory; resized, animation preserved. |
 | `masked-runner.gif` | `Gif, Lavori,professioni miste ,utilensi vari_ - page 3.gif` | Leaderboard divider; resized, animation preserved. |
 | `clown-waving.gif` | `¿Quién o qué es_ ¿Qué hace_ (1).gif` | Report Desk; animation preserved. |
 
-Each animated production file has a `-still.webp` reduced-motion fallback. `user-reaction-contact-sheet.png` distinguishes these user-authorized assets from the original Fraus character sheet. The preparation process is reproducible through `scripts/prepare_user_reactions.py`.
+Each animated production file has a `-still.webp` reduced-motion fallback. Animated 88×31 badges and blinking stickers have equivalent local static frames as well. `user-reaction-contact-sheet.png` distinguishes these user-authorized assets from the original Fraus character sheet. The preparation process is reproducible through `scripts/prepare_user_reactions.py`.
 
 ## Existing product marks
 

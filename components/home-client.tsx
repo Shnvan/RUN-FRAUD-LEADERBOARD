@@ -17,15 +17,16 @@ export function HomeClient({siteKey,ready}:{siteKey:string;ready:boolean}){
   const opener=useRef<HTMLElement|null>(null);
   useEffect(()=>{fetch("/api/overview").then(async r=>{if(!r.ok)throw new Error("unavailable");return r.json() as Promise<LossOverview>}).then(data=>{setOverview(data);setUnavailable(false)}).catch(()=>setUnavailable(true)).finally(()=>setLoading(false));},[]);
   useEffect(()=>{
-    const handle=(event:Event)=>{event.preventDefault();opener.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setOpen(true)};
+    const handle=(event:Event)=>{event.preventDefault();const requested=event instanceof CustomEvent&&event.detail?.opener;opener.current=requested instanceof HTMLElement?requested:document.activeElement instanceof HTMLElement?document.activeElement:null;setOpen(true)};
     window.addEventListener("purchase-record:open",handle);
     if(new URLSearchParams(window.location.search).get("record")==="1"){
+      opener.current=document.querySelector<HTMLElement>("[data-report-trigger]");
       const timer=window.setTimeout(()=>{setOpen(true);history.replaceState(null,"",window.location.pathname+window.location.hash)},0);
       return()=>{window.clearTimeout(timer);window.removeEventListener("purchase-record:open",handle)};
     }
     return()=>window.removeEventListener("purchase-record:open",handle);
   },[]);
-  function changeOpen(next:boolean){setOpen(next);if(!next)requestAnimationFrame(()=>opener.current?.focus())}
+  function changeOpen(next:boolean){setOpen(next);if(!next)window.setTimeout(()=>opener.current?.focus(),0)}
   return <SiteShell><main><HomeArchive overview={overview} loading={loading} unavailable={unavailable}/><LossDialog open={open} onOpenChange={changeOpen} siteKey={siteKey} ready={ready}/></main></SiteShell>;
 }
 

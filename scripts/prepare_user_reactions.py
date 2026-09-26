@@ -30,7 +30,7 @@ STILLS = {
 
 ANIMATIONS = {
     "¿Quién o qué es_ ¿Qué hace_.gif": "clown-juggling.gif",
-    "orig 540\u00a0×\u00a0540 pixels.gif": "angry-yellow.gif",
+    "orig 540\u00a0×\u00a0540 pixels.gif": "angry-yellow.webp",
     "download (1).gif": "batman-thinking.gif",
     "Gif, Lavori,professioni miste ,utilensi vari_ - page 3.gif": "masked-runner.gif",
     "¿Quién o qué es_ ¿Qué hace_ (1).gif": "clown-waving.gif",
@@ -98,12 +98,21 @@ def save_animation(source: Path, filename: str) -> None:
     with Image.open(source) as opened:
         durations: list[int] = []
         frames: list[Image.Image] = []
-        for frame in ImageSequence.Iterator(opened):
+        for index, frame in enumerate(ImageSequence.Iterator(opened)):
+            if filename.endswith(".webp") and index % 2:
+                if durations:
+                    durations[-1] += max(40, int(frame.info.get("duration", opened.info.get("duration", 100))))
+                continue
             durations.append(max(40, int(frame.info.get("duration", opened.info.get("duration", 100)))))
-            frames.append(fit(frame.convert("RGBA"), 360))
+            frames.append(fit(frame.convert("RGBA"), 280 if filename.endswith(".webp") else 360))
         loop = int(opened.info.get("loop", 0))
-    frames[0].save(PUBLIC / filename, save_all=True, append_images=frames[1:], duration=durations, loop=loop, disposal=2, optimize=True)
-    frames[0].save(PUBLIC / filename.replace(".gif", "-still.webp"), "WEBP", quality=86, method=6)
+    if filename.endswith(".webp"):
+        frames[0].save(PUBLIC / filename, "WEBP", save_all=True, append_images=frames[1:], duration=durations, loop=loop, quality=68, method=6, minimize_size=True)
+        still_name=filename.replace(".webp", "-still.webp")
+    else:
+        frames[0].save(PUBLIC / filename, save_all=True, append_images=frames[1:], duration=durations, loop=loop, disposal=2, optimize=True)
+        still_name=filename.replace(".gif", "-still.webp")
+    frames[0].save(PUBLIC / still_name, "WEBP", quality=86, method=6)
 
 
 def make_contact_sheet() -> None:
@@ -131,11 +140,17 @@ def main() -> None:
     SOURCES.mkdir(parents=True, exist_ok=True)
     for original, (filename, removal) in STILLS.items():
         source = DOWNLOADS / original
-        shutil.copy2(source, SOURCES / original)
+        if not source.exists():
+            source = SOURCES / original
+        else:
+            shutil.copy2(source, SOURCES / original)
         save_still(source, filename, removal)
     for original, filename in ANIMATIONS.items():
         source = DOWNLOADS / original
-        shutil.copy2(source, SOURCES / original)
+        if not source.exists():
+            source = SOURCES / original
+        else:
+            shutil.copy2(source, SOURCES / original)
         save_animation(source, filename)
     make_contact_sheet()
 

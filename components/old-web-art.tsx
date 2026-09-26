@@ -31,7 +31,7 @@ const reactionSources:Record<UserReactionName,{src:string;still?:string;width:nu
   "crying-face":{src:"crying-face.webp",width:720,height:713},
   "anime-grin":{src:"anime-grin.webp",width:1280,height:720},
   "clown-juggling":{src:"clown-juggling.gif",still:"clown-juggling-still.webp",width:312,height:312},
-  "angry-yellow":{src:"angry-yellow.gif",still:"angry-yellow-still.webp",width:540,height:540},
+  "angry-yellow":{src:"angry-yellow.webp",still:"angry-yellow-still.webp",width:280,height:280},
   "batman-thinking":{src:"batman-thinking.gif",still:"batman-thinking-still.webp",width:500,height:345},
   "masked-runner":{src:"masked-runner.gif",still:"masked-runner-still.webp",width:242,height:350},
   "clown-waving":{src:"clown-waving.gif",still:"clown-waving-still.webp",width:312,height:312},
@@ -44,7 +44,7 @@ export function CharacterArt({character,pose,className="",priority=false,label,s
   if(!fallback)return <Image unoptimized src={src} width={560} height={560} priority={priority} alt={label||""} aria-hidden={label?undefined:true} className={classes} style={style}/>;
   return <>
     <Image unoptimized src={src} width={560} height={560} priority={priority} alt={label||""} aria-hidden={label?undefined:true} className={`${classes} fraus-motion-animated`} style={style}/>
-    <Image src={fallback} width={560} height={560} alt="" aria-hidden className={`${classes} fraus-motion-static`} style={style}/>
+    <Image unoptimized src={fallback} width={560} height={560} alt="" aria-hidden className={`${classes} fraus-motion-static`} style={style}/>
   </>;
 }
 
@@ -55,16 +55,18 @@ export function ReactionImage({name,className="",priority=false,label,style}:{na
   if(!asset.still)return <Image unoptimized src={src} width={asset.width} height={asset.height} priority={priority} alt={label||""} aria-hidden={label?undefined:true} className={classes} style={style}/>;
   return <>
     <Image unoptimized src={src} width={asset.width} height={asset.height} priority={priority} alt={label||""} aria-hidden={label?undefined:true} className={`${classes} fraus-motion-animated`} style={style}/>
-    <Image src={`/assets/user-reactions/${asset.still}`} width={asset.width} height={asset.height} alt="" aria-hidden className={`${classes} fraus-motion-static`} style={style}/>
+    <Image unoptimized src={`/assets/user-reactions/${asset.still}`} width={asset.width} height={asset.height} alt="" aria-hidden className={`${classes} fraus-motion-static`} style={style}/>
   </>;
 }
 
 export function WebBadge({name,alt=""}:{name:"fraus-archive"|"best-viewed"|"guestbook"|"email-receipts";alt?:string}){
-  return <Image unoptimized src={`/assets/badges/${name}.gif`} width={88} height={31} alt={alt} aria-hidden={alt?undefined:true} className="pixel-art old-web-badge"/>;
+  const classes="pixel-art old-web-badge";
+  return <><Image unoptimized src={`/assets/badges/${name}.gif`} width={88} height={31} alt={alt} aria-hidden={alt?undefined:true} className={`${classes} fraus-motion-animated`}/><Image unoptimized src={`/assets/badges/${name}-still.webp`} width={88} height={31} alt="" aria-hidden className={`${classes} fraus-motion-static`}/></>;
 }
 
 export function BlinkSticker({kind}:{kind:"new"|"warning"}){
-  return <Image unoptimized src={`/assets/stickers/${kind}-blink.gif`} width={88} height={31} alt="" aria-hidden className="pixel-art inline-block"/>;
+  const classes="pixel-art inline-block";
+  return <><Image unoptimized src={`/assets/stickers/${kind}-blink.gif`} width={88} height={31} alt="" aria-hidden className={`${classes} fraus-motion-animated`}/><Image unoptimized src={`/assets/stickers/${kind}-blink-still.webp`} width={88} height={31} alt="" aria-hidden className={`${classes} fraus-motion-static`}/></>;
 }
 
 export function MarqueeStrip({children}:{children:ReactNode}){
