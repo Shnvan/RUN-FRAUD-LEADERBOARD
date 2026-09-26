@@ -13,10 +13,11 @@ export async function POST(request:Request){
     network=await networkFingerprint(request,"admin-mfa");
     await dbRpc("reserve_auth_attempt",{p_fingerprint:network,p_kind:"mfa"});
     const supabase=await createSupabaseServerClient();if(!supabase)throw new ServiceError(503,"MFA is temporarily unavailable.");
-    const factors=await supabase.auth.mfa.listFactors();
-    if(!(factors.data?.totp||[]).some(f=>f.id===factorId))throw new ServiceError(400,"Authenticator factor not found.");
+    // Newly enrolled factors are unverified and are not guaranteed to appear in
+    // listFactors(). Supabase still accepts their enrollment ID for a challenge,
+    // and validates that the factor belongs to the authenticated user.
     const challenge=await supabase.auth.mfa.challenge({factorId});
-    if(challenge.error||!challenge.data?.id)throw new ServiceError(401,"The authenticator code was not accepted.");
+    if(challenge.error||!challenge.data?.id)throw new ServiceError(401,"The authenticator code was not accepted. Restart authenticator setup if the QR code was refreshed.");
     const verified=await supabase.auth.mfa.verify({factorId,challengeId:challenge.data.id,code});
     if(verified.error)throw new ServiceError(401,"The authenticator code was not accepted.");
     await recordSecurityEvent("admin_mfa","accepted",network,request.headers.get("x-vercel-id"));
