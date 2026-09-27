@@ -162,8 +162,7 @@ export async function verifyTurnstile(token: string, expectedHostname: string, r
   const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body,signal:AbortSignal.timeout(7000)}).catch(()=>null);
   if (!res?.ok) throw new ServiceError(503,"Verification is temporarily unavailable. Try again later.","turnstile_unavailable");
   const result = await res.json() as {success:boolean;hostname?:string;action?:string};
-  const usingCloudflareTestKeys=process.env.VERCEL_ENV==="preview"&&
-    process.env.TURNSTILE_SITE_KEY==="1x00000000000000000000AA"&&
+  const usingCloudflareTestKeys=process.env.TURNSTILE_SITE_KEY==="1x00000000000000000000AA"&&
     secret==="1x0000000000000000000000000000000AA";
   if (!result.success || (!usingCloudflareTestKeys&&(result.hostname !== expectedHostname || result.action!==action))) throw new ServiceError(400,"Please complete the verification and try again.","turnstile_rejected");
 }
