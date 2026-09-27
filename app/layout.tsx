@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
+import "@fontsource/bungee/400.css";
+import "@fontsource/silkscreen/400.css";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme-provider";
 

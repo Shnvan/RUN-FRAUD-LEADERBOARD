@@ -13,6 +13,7 @@
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern .vercel",
     "test": "node --test tests/*.test.mjs",
+    "test:e2e": "playwright test",
     "security:audit": "npm audit --omit=dev --audit-level=high",
     "db:generate": "drizzle-kit generate"
   },
@@ -20,6 +21,8 @@
     "@base-ui/react": "^1.7.0",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
+    "@fontsource/bungee": "^5.3.0",
+    "@fontsource/silkscreen": "^5.3.0",
     "@hookform/resolvers": "^5.7.1",
     "@shadcn/react": "^0.3.0",
     "@supabase/ssr": "^0.12.7",
@@ -50,8 +53,10 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vite-plugin": "1.60.2",
     "@cloudflare/workers-types": "5.20260926.1",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "4.2.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "22.19.19",

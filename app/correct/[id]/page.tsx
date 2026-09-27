@@ -1,7 +1,15 @@
-import { notFound } from "next/navigation";
-import { SiteShell } from "@/components/site-shell";
-import { CorrectionForm } from "@/components/correction-form";
-import { publicDbRpc } from "@/lib/server";
-import { money, type PublicLoss } from "@/lib/domain";
+import {notFound} from "next/navigation";
+import {SiteShell} from "@/components/site-shell";
+import {RetroWindow} from "@/components/retro-window";
+import {CorrectionForm} from "@/components/correction-form";
+import {publicDbRpc} from "@/lib/server";
+import {money,type PublicLoss} from "@/lib/domain";
+
 export const dynamic="force-dynamic";
-export default async function CorrectPage({params}:{params:Promise<{id:string}>}){const id=(await params).id;if(!/^[0-9a-f-]{36}$/i.test(id))notFound();let record:PublicLoss|null;try{record=await publicDbRpc<PublicLoss|null>("get_public_record",{p_id:id})}catch{return <SiteShell><main className="mx-auto grid min-h-[65dvh] max-w-[1380px] place-items-center px-5 py-16 text-center md:px-9"><div><p className="gallery-label text-muted-foreground">Correction request</p><h1 className="mt-4 text-4xl font-semibold tracking-[-.06em]">Record unavailable.</h1><p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">We could not load this public record. Try again later.</p></div></main></SiteShell>}if(!record)notFound();return <SiteShell><main className="mx-auto max-w-[1380px] px-5 py-16 md:px-9 md:py-24"><div className="grid gap-10 lg:grid-cols-12"><div className="lg:col-span-4"><p className="gallery-label text-muted-foreground">Private request</p><h1 className="mt-4 text-5xl font-semibold leading-[.95] tracking-[-.07em]">Correct this report.</h1><p className="mt-5 text-sm leading-6 text-muted-foreground">Your contact details and explanation are visible only to moderators.</p><div className="gallery-card mt-8 border border-foreground bg-foreground p-5 text-background"><p className="font-semibold">@{record.username}</p><p className="mt-16 break-all font-mono text-3xl tabular">{money(record.unresolved_amount)}</p><p className="mt-2 gallery-label text-background/50">Reported unresolved amount</p></div></div><div className="min-w-0 lg:col-span-7 lg:col-start-6"><CorrectionForm purchaseId={id} siteKey={process.env.TURNSTILE_SITE_KEY||""}/></div></div></main></SiteShell>}
+export default async function CorrectPage({params}:{params:Promise<{id:string}>}){
+  const id=(await params).id;if(!/^[0-9a-f-]{36}$/i.test(id))notFound();
+  let record:PublicLoss|null;
+  try{record=await publicDbRpc<PublicLoss|null>("get_public_record",{p_id:id})}catch{return <SiteShell><main className="archive-desk grid min-h-[60dvh] place-items-center"><RetroWindow title="CORRECTION DESK / UNAVAILABLE" tone="red" className="w-full max-w-lg"><h1 className="archive-heading">Record unavailable.</h1><p className="mt-3 text-sm">We could not load this public record. Try again later.</p></RetroWindow></main></SiteShell>}
+  if(!record)notFound();
+  return <SiteShell><main className="archive-desk"><div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start"><aside className="space-y-4"><RetroWindow title="CORRECTION DESK / PRIVATE" tone="lime"><span className="archive-stamp">Private request</span><h1 className="archive-heading mt-3">Correct this report</h1><p className="mt-3 text-sm leading-6">Your contact details and explanation are visible only to moderators.</p></RetroWindow><RetroWindow title="PUBLIC RECORD" tone="paper"><p className="text-lg font-bold">@{record.username}</p><p className="mt-5 break-all font-mono text-2xl font-bold tabular">{money(record.unresolved_amount)}</p><p className="gallery-label mt-1 text-muted-foreground">Reported unresolved amount</p></RetroWindow></aside><div className="min-w-0"><CorrectionForm purchaseId={id} siteKey={process.env.TURNSTILE_SITE_KEY||""}/></div></div></main></SiteShell>;
+}
