@@ -2,6 +2,7 @@ import { boundedFormData, contentFingerprint, dbRpc, deleteEvidence, errorRespon
 import { sanitizeEvidence } from "@/lib/evidence";
 import { normalizeHandle, validForumUsername, validHandle } from "@/lib/domain";
 import {canonicalItems,itemTotals,parseReportItems} from "@/lib/report-items.mjs";
+import {validBuyerAttestation} from "@/lib/buyer-report-notice.mjs";
 
 const issues=new Set(["not_delivered","refund_not_received","other_unresolved"]);
 type Reservation={existing_id:string|null;flags:string[];proceed:boolean};
@@ -16,6 +17,7 @@ export async function POST(request:Request){
     const handle=normalizeHandle(String(data.get("seller")||""));
     const buyerUsername=String(data.get("buyerUsername")||"").trim();
     const issue=String(data.get("issueType")||""),details=String(data.get("details")||"").trim();
+    const buyerAttestation=String(data.get("buyerAttestation")||"");
     const formIdempotency=String(data.get("idempotencyKey")||"");
     let items;
     try{items=parseReportItems(String(data.get("items")||""));}
@@ -27,6 +29,7 @@ export async function POST(request:Request){
     if(!validForumUsername(buyerUsername))throw new ServiceError(400,"Enter your forum username (2 to 64 characters).");
     if(!issues.has(issue))throw new ServiceError(400,"Choose what remains unresolved.");
     if(details.length<10||details.length>500)throw new ServiceError(400,"Describe what happened in 10 to 500 characters.");
+    if(!validBuyerAttestation(buyerAttestation))throw new ServiceError(400,"Confirm that this is your own purchase and that your report is accurate.","attestation_required");
     if(!validUuid(idempotency)||formIdempotency!==idempotency)throw new ServiceError(400,"Refresh the form and try again.");
     await verifyTurnstile(token,new URL(request.url).hostname,request,"loss_report",idempotency);
     networkKey=await networkFingerprint(request);

@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { RecordTrigger } from "@/components/record-trigger";
 import {ThemeToggle} from "@/components/theme-toggle";
 import {WebBadge} from "@/components/old-web-art";
+import {BuyerReportNotice} from "@/components/buyer-report-notice";
 
 export function SiteShell({children}: {children:React.ReactNode}) {
   return <div className="min-h-screen overflow-x-clip">
@@ -19,6 +20,6 @@ export function SiteShell({children}: {children:React.ReactNode}) {
       </div>
     </header>
     {children}
-    <footer className="mx-auto max-w-[1480px] px-4 pb-8 md:px-8"><div className="retro-window retro-window--navy"><div className="retro-titlebar"><span className="retro-titlebar__app" aria-hidden="true">F</span>fraus / archive footer<span className="retro-titlebar__controls" aria-hidden="true"><i>_</i><i>□</i><i>×</i></span></div><div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4"><div><strong className="display-type text-lg">fraus</strong><p className="text-xs text-muted-foreground">Reviewed buyer claims / PHP. Inclusion does not establish wrongdoing.</p></div><div className="flex flex-wrap gap-2 font-[family-name:var(--font-pixel)] text-[10px]"><WebBadge name="best-viewed"/><Link href="/methodology" className="archive-button archive-button--paper">Method</Link><Link href="/about" className="archive-button archive-button--paper">About</Link><Link href="/admin" className="archive-button archive-button--paper">Admin <ArrowUpRight size={13}/></Link></div></div></div></footer>
+    <footer className="mx-auto max-w-[1480px] px-4 pb-8 md:px-8"><div className="retro-window retro-window--navy"><div className="retro-titlebar"><span className="retro-titlebar__app" aria-hidden="true">F</span>fraus / archive footer<span className="retro-titlebar__controls" aria-hidden="true"><i>_</i><i>□</i><i>×</i></span></div><div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4"><div className="max-w-3xl"><strong className="display-type text-lg">fraus</strong><BuyerReportNotice variant="compact" className="mt-1"/></div><div className="flex flex-wrap gap-2 font-[family-name:var(--font-pixel)] text-[10px]"><WebBadge name="best-viewed"/><Link href="/methodology" className="archive-button archive-button--paper">Method</Link><Link href="/about" className="archive-button archive-button--paper">About</Link><Link href="/admin" className="archive-button archive-button--paper">Admin <ArrowUpRight size={13}/></Link></div></div></div></footer>
   </div>;
 }

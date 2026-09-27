@@ -18,7 +18,7 @@ async function setTheme(page:Page,theme:"light"|"dark"){
 }
 async function mockHome(page:Page,status=200){
   await page.route("**/api/overview",route=>status===200?route.fulfill({status,contentType:"application/json",body:JSON.stringify(populated)}):route.fulfill({status,body:"{}"}));
-  await page.route("**/api/account-types",route=>route.fulfill({status:200,contentType:"application/json",body:"[]"}));
+  await page.route("**/api/account-types",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify([{slug:"chatgpt",label:"ChatGPT"}])}));
 }
 async function noOverflow(page:Page){
   const dimensions=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
@@ -68,6 +68,39 @@ test("header order, touch targets, and dialog focus",async({page})=>{
   expect(await page.evaluate(()=>document.querySelector('[data-slot="dialog-content"]')?.contains(document.activeElement))).toBe(true);
   await page.keyboard.press("Escape"); await expect(page.locator('[data-slot="dialog-content"]')).toBeHidden();
   await expect(report).toBeFocused();
+});
+
+test("purchase attestation is required and receives focus",async({page})=>{
+  await page.setViewportSize({width:390,height:844}); await mockHome(page);
+  await page.route("**/api/loss-reports",route=>route.fulfill({status:503,contentType:"application/json",body:JSON.stringify({error:"Reporting is unavailable until the data service is configured"})}));
+  await page.goto("/");
+  await page.getByRole("link",{name:"Report unresolved loss"}).first().click();
+  await page.getByLabel("Your forum username").fill("fixture_buyer");
+  await page.getByLabel("Seller’s forum username").fill("fixture_seller");
+  await page.getByLabel("Account type", { exact: true }).selectOption("chatgpt");
+  await page.getByLabel("Price per account · PHP").fill("100");
+  await page.getByLabel("What remains unresolved?").selectOption("not_delivered");
+  await page.getByLabel("Brief description · private").fill("The purchased account was not delivered.");
+  const form=page.locator(".intake-window form");
+  await form.evaluate(element=>element.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true})));
+  const attestation=page.getByLabel(/I confirm that I personally made the purchase/);
+  await expect(page.getByRole("alert")).toContainText("Confirm that this is your own purchase");
+  await expect(attestation).toBeFocused();
+  await attestation.check();
+  await form.evaluate(element=>element.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true})));
+  await expect(page.getByRole("alert")).toContainText("Reporting is unavailable until the data service is configured");
+});
+
+test("buyer report notices use the standardized full and compact copy",async({page})=>{
+  await mockHome(page); await page.goto("/");
+  await expect(page.getByText("Buyer-submitted claims. Moderated before publication, not independently verified. Totals use approved, open reports and are not verified revenue, profit, or findings of wrongdoing.",{exact:true}).first()).toBeVisible();
+  await page.getByRole("link",{name:"Report unresolved loss"}).first().click();
+  await expect(page.getByRole("note",{name:"Important notice about buyer reports"})).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.goto("/methodology");
+  await expect(page.getByRole("note",{name:"Important notice about buyer reports"})).toBeVisible();
+  await page.goto("/about");
+  await expect(page.getByText("Buyer-submitted claims. Moderated before publication, not independently verified. Totals use approved, open reports and are not verified revenue, profit, or findings of wrongdoing.",{exact:true}).first()).toBeVisible();
 });
 
 test("reduced motion uses static artwork",async({page})=>{

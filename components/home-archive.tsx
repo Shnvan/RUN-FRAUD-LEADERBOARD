@@ -8,6 +8,7 @@ import {AccountTypeBadges} from "@/components/account-type-badges";
 import {PrimaryProduct} from "@/components/product-brand";
 import {money,type LossOverview,type SellerLossStats} from "@/lib/domain";
 import {BlinkSticker,CharacterArt,MarqueeStrip,ReactionImage,VisitorCounter,WebBadge} from "@/components/old-web-art";
+import {BuyerReportNotice} from "@/components/buyer-report-notice";
 
 const count=(value:number|null|undefined)=>new Intl.NumberFormat("en-PH").format(value||0);
 
@@ -28,7 +29,7 @@ export function HomeArchive({overview,loading,unavailable}:{overview:LossOvervie
         </RetroWindow>
         <RetroWindow title="FIND_A_HANDLE.DAT" tone="lime" bodyClassName="archive-search"><p className="mb-3 text-xs">Search the reviewed public record.</p><SellerSearch hero id="desktop-seller-search"/></RetroWindow>
         <RetroWindow title="WEB RING / FRAUS" tone="paper" className="web-ring-box" bodyClassName="web-ring-body"><div className="web-ring-copy"><p className="gallery-label">← previous · random · next →</p><div className="mt-3 flex flex-wrap gap-1"><WebBadge name="fraus-archive"/><WebBadge name="best-viewed"/></div></div><ReactionImage name="rat-money" className="web-ring-rat"/></RetroWindow>
-        <RetroWindow title="ARCHIVE NOTICE" tone="red"><div className="flex gap-3"><div><p className="text-xs leading-5">Every entry is a reviewed buyer claim. Inclusion does not independently prove a purchase, wrongdoing, revenue, or profit.</p><Link href="/methodology" className="mt-3 inline-flex items-center gap-1 text-xs font-semibold underline underline-offset-4">Read the method <ArrowRight size={13}/></Link></div><ReactionImage name="burns-suspicious" className="archive-burns"/></div></RetroWindow>
+        <RetroWindow title="ARCHIVE NOTICE" tone="red"><div className="flex gap-3"><div><BuyerReportNotice variant="compact"/><Link href="/methodology" className="mt-3 inline-flex items-center gap-1 text-xs font-semibold underline underline-offset-4">Read the method <ArrowRight size={13}/></Link></div><ReactionImage name="burns-suspicious" className="archive-burns"/></div></RetroWindow>
       </aside>
 
       <div className="old-web-main min-w-0 space-y-4">
@@ -65,7 +66,7 @@ export function HomeArchive({overview,loading,unavailable}:{overview:LossOvervie
 
     <div className="stats-scene mt-5">
       <RetroWindow title="BY THE NUMBERS / REVIEWED OPEN REPORTS" tone="cobalt" bodyClassName="p-0"><div className="grid grid-cols-2 sm:grid-cols-5"><Total label="Reported purchase value" value={money(overview.totals.reported_purchase_value)}/><Total label="Accounts reported purchased" value={count(overview.totals.accounts_reported_purchased)}/><Total label="Amount still unresolved" value={money(overview.totals.unresolved_amount)}/><Total label="Approved open reports" value={count(overview.totals.report_count)}/><Total label="Visible sellers" value={count(overview.totals.visible_sellers)}/></div><div className="stats-decoration-rail" aria-hidden="true"><ReactionImage name="krabs-money" className="stats-krabs"/></div></RetroWindow>
-      <div className="tiny-ad"><strong>CASE FILES!</strong><span>Now with real reviewed data</span><a href="#gallery">ENTER →</a></div>
+      <div className="tiny-ad"><strong>CASE FILES!</strong><span>Approved report data</span><a href="#gallery">ENTER →</a></div>
     </div>
 
     <section id="gallery" className="leaderboard-scene mt-6 scroll-mt-4"><RetroWindow title="CASE FILES / FULL RANKED INDEX" tone="navy" bodyClassName="p-0" chrome="browser">
@@ -74,7 +75,7 @@ export function HomeArchive({overview,loading,unavailable}:{overview:LossOvervie
       <div className="leaderboard-decoration-rail" aria-hidden="true"><ReactionImage name="masked-runner" className="leaderboard-runner"/></div>
       <StatusStrip><span>Open reports only / reviewed buyer claims</span><Link href="/methodology" className="underline underline-offset-2">How rankings work →</Link></StatusStrip>
     </RetroWindow></section>
-    <p className="mt-4 max-w-3xl text-xs leading-5 text-muted-foreground">Reported purchase value is neither verified revenue nor profit. An unresolved amount is a buyer claim, not a finding of fraud. Product marks identify what buyers reported purchasing and do not imply affiliation.</p>
+    <p className="mt-4 max-w-3xl text-xs leading-5 text-muted-foreground">Product marks identify what buyers reported purchasing and do not imply affiliation or endorsement.</p>
   </div>;
 }
 
